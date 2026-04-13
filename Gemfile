@@ -75,3 +75,5 @@ group :development do
   gem "letter_opener"
   gem "letter_opener_web", "~> 3.0"
 end
+
+gem "rqrcode", "~> 3.2"

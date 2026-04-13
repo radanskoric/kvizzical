@@ -1,0 +1,29 @@
+mvc_correct:
+  question: mvc_question
+  body: "Model-View-Controller"
+  correct: true
+
+mvc_wrong_1:
+  question: mvc_question
+  body: "Most Valuable Coder"
+  correct: false
+
+mvc_wrong_2:
+  question: mvc_question
+  body: "Multiple Virtual Connections"
+  correct: false
+
+mvc_wrong_3:
+  question: mvc_question
+  body: "Main Visual Component"
+  correct: false
+
+gem_correct:
+  question: gem_question
+  body: "gem install"
+  correct: true
+
+gem_wrong_1:
+  question: gem_question
+  body: "ruby install"
+  correct: false

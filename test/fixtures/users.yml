@@ -1,0 +1,7 @@
+alice:
+  name: "Alice"
+  session_token: "alice_token_123456789012"
+
+bob:
+  name: "Bob"
+  session_token: "bob_token_1234567890123"

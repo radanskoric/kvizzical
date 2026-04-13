@@ -1,0 +1,7 @@
+alice_in_game:
+  user: alice
+  game: active_game
+
+bob_in_game:
+  user: bob
+  game: active_game

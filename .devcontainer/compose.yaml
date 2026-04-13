@@ -16,12 +16,12 @@ services:
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
     ports:
-      - "3000:3000"
+      - "3100:3000"
 
   rustfs:
     image: rustfs/rustfs:latest
     security_opt:
-    - "no-new-privileges:true"
+      - "no-new-privileges:true"
     command: /data
     environment:
       - RUSTFS_ADDRESS=0.0.0.0:9000
@@ -38,8 +38,8 @@ services:
       - rustfs_data:/data
       - rustfs_logs:/logs
     ports:
-      - "9000:9000" # S3 API port
-      - "9001:9001" # Console port
+      - "9100:9000" # S3 API port
+      - "9101:9001" # Console port
 
 volumes:
   rustfs_data:

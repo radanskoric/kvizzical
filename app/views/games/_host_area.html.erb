@@ -1,0 +1,107 @@
+<div id="game_host_area">
+  <% if game.waiting? %>
+    <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-8 mb-6 space-y-6">
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Game Code</p>
+        <p class="text-5xl font-mono font-bold tracking-widest text-red-600" data-game-code><%= game.code %></p>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Scan to Join</p>
+        <%= qr_code_svg(play_url(code: game.code), size: 200) %>
+      </div>
+
+      <div id="player_list">
+        <%= render "games/player_list", game: game %>
+      </div>
+
+      <%= form_with url: start_game_path(game), method: :post, class: "pt-4" do %>
+        <button type="submit" class="rounded-xl bg-green-600 px-8 py-4 text-xl font-semibold text-white shadow-sm hover:bg-green-500 transition">
+          Start Quiz
+        </button>
+      <% end %>
+    </div>
+
+  <% elsif game.active? && game.current_question %>
+    <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-8 mb-6 space-y-6">
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Game Code</p>
+        <p class="text-3xl font-mono font-bold tracking-widest text-red-600" data-game-code><%= game.code %></p>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Players</p>
+        <p class="text-2xl font-bold text-gray-900" data-player-count><%= game.participants.count %></p>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Time Remaining</p>
+        <p class="text-4xl font-bold text-red-600"
+           data-controller="countdown"
+           data-countdown-seconds-value="<%= game.current_question.time_limit_seconds %>"
+           data-countdown-opened-at-value="<%= game.question_opened_at.iso8601(3) %>"
+           data-countdown-finish-url-value="<%= finish_question_game_path(game) %>">
+        </p>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Current Question</p>
+        <p class="text-xl font-semibold text-gray-900"><%= game.current_question.body %></p>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Responses</p>
+        <p class="text-2xl font-bold text-gray-900" data-response-count><%= Response.where(participant: game.participants, question: game.current_question).count %> / <%= game.participants.count %></p>
+      </div>
+
+      <%= form_with url: finish_question_game_path(game), method: :post, class: "pt-2" do %>
+        <button type="submit" class="rounded-xl bg-amber-600 px-8 py-4 text-xl font-semibold text-white shadow-sm hover:bg-amber-500 transition">
+          Finish Question
+        </button>
+      <% end %>
+    </div>
+
+  <% elsif game.reviewing? && game.current_question %>
+    <% question = game.current_question %>
+    <% correct_answer = question.answers.find_by(correct: true) %>
+    <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-8 mb-6 space-y-6">
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Question</p>
+        <p class="text-xl font-semibold text-gray-900"><%= question.body %></p>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Correct Answer</p>
+        <div class="rounded-xl bg-green-50 border-2 border-green-400 px-6 py-4">
+          <p class="text-lg font-bold text-green-700"><%= correct_answer&.body %></p>
+        </div>
+      </div>
+
+      <% next_question = game.quiz.questions.order(:position).where("position > ?", question.position).first %>
+      <%= form_with url: advance_game_path(game), method: :post, class: "pt-2" do %>
+        <button type="submit" class="rounded-xl bg-red-600 px-8 py-4 text-xl font-semibold text-white shadow-sm hover:bg-red-500 transition">
+          <%= next_question ? "Next Question" : "Show Results" %>
+        </button>
+      <% end %>
+    </div>
+
+    <%= render "shared/leaderboard", game: game %>
+
+  <% elsif game.finished? %>
+    <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-8 mb-6 space-y-6">
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Game Code</p>
+        <p class="text-3xl font-mono font-bold tracking-widest text-red-600" data-game-code><%= game.code %></p>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Players</p>
+        <p class="text-2xl font-bold text-gray-900" data-player-count><%= game.participants.count %></p>
+      </div>
+
+      <p class="text-xl text-gray-600 mt-2">Game Over</p>
+    </div>
+
+    <%= render "shared/leaderboard", game: game %>
+  <% end %>
+</div>

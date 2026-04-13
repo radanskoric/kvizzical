@@ -1,0 +1,21 @@
+<div data-leaderboard class="rounded-2xl bg-white border border-gray-200 shadow-sm p-6 text-left">
+  <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4 text-center">Leaderboard</h3>
+  <% ranked = game.participants.includes(:user, :responses)
+       .map { |p| [p, p.responses.sum(&:score)] }
+       .sort_by { |_, score| -score } %>
+  <% if ranked.any? %>
+    <ol class="space-y-2">
+      <% ranked.each_with_index do |(participant, score), index| %>
+        <li data-leaderboard-entry class="flex items-center justify-between rounded-xl px-4 py-3 <%= index == 0 ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50' %>">
+          <div class="flex items-center gap-3">
+            <span class="text-lg font-bold text-gray-400 w-6 text-center"><%= index + 1 %></span>
+            <span class="font-semibold text-gray-900"><%= participant.name %></span>
+          </div>
+          <span class="font-bold text-lg <%= index == 0 ? 'text-yellow-600' : 'text-gray-700' %>"><%= score %></span>
+        </li>
+      <% end %>
+    </ol>
+  <% else %>
+    <p class="text-gray-400 text-center">No scores yet</p>
+  <% end %>
+</div>

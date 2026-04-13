@@ -9,8 +9,20 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  root "home#show"
+
+  get  "play/:code", to: "play#show", as: :play
+  post "play/:code", to: "play#create"
+
+  resources :responses, only: [ :create ]
+
+  resources :games, only: [ :show, :create ] do
+    member do
+      post :start
+      post :advance
+      post :finish_question
+    end
+  end
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   mount Litestream::Engine, at: "/litestream" if Rails.env.development?

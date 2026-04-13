@@ -1,0 +1,80 @@
+<div id="player_game_area" data-game-status="<%= game.status %>">
+  <% if game.waiting? %>
+    <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= game.quiz.title %></h1>
+    <p class="text-lg text-gray-500 mb-4">Welcome, <span class="font-semibold text-gray-700"><%= participant.name %></span></p>
+    <div class="rounded-xl bg-gray-50 border border-gray-200 p-8">
+      <p class="text-xl text-gray-600">Waiting for the host to start&hellip;</p>
+    </div>
+
+  <% elsif game.active? && game.current_question %>
+    <% question = game.current_question %>
+    <% existing_response = participant.responses.find_by(question: question) %>
+    <div class="flex items-center justify-between mb-2">
+      <p class="text-sm font-medium text-gray-500 uppercase tracking-wide"><%= game.quiz.title %></p>
+      <p class="text-3xl font-bold text-red-600"
+         data-controller="countdown"
+         data-countdown-seconds-value="<%= question.time_limit_seconds %>"
+         data-countdown-opened-at-value="<%= game.question_opened_at.iso8601(3) %>">
+      </p>
+    </div>
+    <h2 class="text-2xl font-bold text-gray-900 mb-6" data-question-body><%= question.body %></h2>
+
+    <div id="answer_area" class="space-y-3">
+      <% if existing_response %>
+        <div class="rounded-xl bg-red-50 border-2 border-red-300 p-6">
+          <p class="text-lg font-semibold text-red-700">Answer submitted!</p>
+          <p class="text-gray-500 mt-1">Waiting for results&hellip;</p>
+        </div>
+      <% else %>
+        <% question.answers.each do |answer| %>
+          <%= form_with url: responses_path, method: :post, class: "w-full" do |f| %>
+            <%= f.hidden_field :game_code, value: game.code %>
+            <%= f.hidden_field :question_id, value: question.id %>
+            <%= f.hidden_field :answer_id, value: answer.id %>
+            <button type="submit" class="w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg font-medium text-gray-800 hover:border-red-500 hover:bg-red-50 transition">
+              <%= answer.body %>
+            </button>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+
+  <% elsif game.reviewing? && game.current_question %>
+    <% question = game.current_question %>
+    <% correct_answer = question.answers.find_by(correct: true) %>
+    <% player_response = participant.responses.find_by(question: question) %>
+    <h2 class="text-2xl font-bold text-gray-900 mb-4"><%= question.body %></h2>
+
+    <div class="space-y-3 mb-6">
+      <% question.answers.each do |answer| %>
+        <% is_correct = answer.correct? %>
+        <% was_chosen = player_response&.answer_id == answer.id %>
+        <div class="w-full rounded-xl border-2 px-6 py-4 text-lg font-medium
+          <%= if is_correct
+                'border-green-400 bg-green-50 text-green-700'
+              elsif was_chosen
+                'border-red-400 bg-red-50 text-red-700'
+              else
+                'border-gray-200 bg-white text-gray-400'
+              end %>">
+          <%= answer.body %>
+          <% if is_correct %>
+            <span class="ml-2 text-green-600 font-bold">&check;</span>
+          <% elsif was_chosen %>
+            <span class="ml-2 text-red-600 font-bold">&cross;</span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <%= render "shared/leaderboard", game: game %>
+
+  <% elsif game.finished? %>
+    <h1 class="text-3xl font-bold text-gray-900 mb-4"><%= game.quiz.title %></h1>
+    <div class="rounded-xl bg-gray-50 border border-gray-200 p-8 mb-6">
+      <p class="text-2xl font-bold text-gray-900 mb-2">Game Over!</p>
+      <p class="text-gray-500">Thanks for playing, <span class="font-semibold"><%= participant.name %></span></p>
+    </div>
+    <%= render "shared/leaderboard", game: game %>
+  <% end %>
+</div>

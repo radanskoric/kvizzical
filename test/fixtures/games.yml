@@ -1,0 +1,11 @@
+waiting_game:
+  quiz: ruby_trivia
+  code: "ABC123"
+  status: 0
+
+active_game:
+  quiz: ruby_trivia
+  code: "DEF456"
+  status: 1
+  current_question: mvc_question
+  question_opened_at: <%= 1.second.ago.to_fs(:db) %>

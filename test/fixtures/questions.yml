@@ -1,0 +1,11 @@
+mvc_question:
+  quiz: ruby_trivia
+  body: "What does MVC stand for?"
+  time_limit_seconds: 15
+  position: 1
+
+gem_question:
+  quiz: ruby_trivia
+  body: "What command installs a Ruby gem?"
+  time_limit_seconds: 15
+  position: 2
