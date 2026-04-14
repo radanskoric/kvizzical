@@ -1,6 +1,26 @@
 require "test_helper"
 
 class GamesControllerTest < ActionDispatch::IntegrationTest
+  test "show renders successfully" do
+    game = games(:waiting_game)
+
+    get game_path(game)
+
+    assert_response :success
+  end
+
+  test "create builds a game for the selected quiz" do
+    quiz = quizzes(:ruby_trivia)
+
+    assert_difference ["Game.count", "quiz.games.count"], 1 do
+      post games_path, params: { quiz_id: quiz.id }
+    end
+
+    created_game = Game.order(:id).last
+    assert_redirected_to game_path(created_game)
+    assert_equal quiz, created_game.quiz
+  end
+
   test "start transitions game from waiting to active and opens first question" do
     game = games(:waiting_game)
     assert game.waiting?
@@ -54,6 +74,20 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_nil game.current_question
   end
 
+  test "advance broadcasts game state update" do
+    game = games(:active_game)
+    game.update!(status: :reviewing, question_opened_at: nil)
+    calls = []
+    game.define_singleton_method(:broadcast_replace_to) do |*args, **kwargs|
+      calls << [ args, kwargs ]
+    end
+
+    game.advance!
+
+    assert_operator calls.size, :>=, 1
+    assert_equal "game_host_area", calls.first.last[:target]
+  end
+
   test "finish_question transitions active to reviewing" do
     game = games(:active_game)
     question = game.current_question
@@ -65,6 +99,19 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert game.reviewing?
     assert_equal question, game.current_question
     assert_nil game.question_opened_at
+  end
+
+  test "finish_question broadcasts game state update" do
+    game = games(:active_game)
+    calls = []
+    game.define_singleton_method(:broadcast_replace_to) do |*args, **kwargs|
+      calls << [ args, kwargs ]
+    end
+
+    game.finish_question!
+
+    assert_operator calls.size, :>=, 1
+    assert_equal "game_host_area", calls.first.last[:target]
   end
 
   test "finish_question does nothing if game is not active" do

@@ -14,12 +14,7 @@ class ResponsesController < ApplicationController
         if game.all_answered?
           game.finish_question!
         else
-          game.broadcast_replace_to(
-            "game_#{game.id}",
-            target: "game_host_area",
-            partial: "games/host_area",
-            locals: { game: game }
-          )
+          game.broadcast_game_state
         end
       end
     end

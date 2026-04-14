@@ -44,8 +44,7 @@ class Game < ApplicationRecord
   end
 
   def broadcast_game_state
-    broadcast_replace_to(
-      self,
+    broadcast_replace(
       target: "game_host_area",
       partial: "games/host_area",
       locals: { game: self }
@@ -61,15 +60,6 @@ class Game < ApplicationRecord
         locals: { game: self, participant: participant }
       )
     end
-  end
-
-  def broadcast_player_list
-    broadcast_replace_to(
-      self,
-      target: "player_list",
-      partial: "games/player_list",
-      locals: { game: self }
-    )
   end
 
   private

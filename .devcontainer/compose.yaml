@@ -7,6 +7,7 @@ services:
       dockerfile: .devcontainer/Dockerfile
     depends_on:
       - rustfs
+    shm_size: "1gb"
     volumes:
       - ../..:/workspaces:cached
     environment:

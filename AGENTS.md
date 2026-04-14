@@ -70,3 +70,8 @@ config/
 - Test the public interface, not implementation details
 - One assertion per behavior; avoid redundancy
 - Test files mirror `app/` structure under `test/`
+- All changes must preserve or restore `100%` line coverage and
+`100%` branch coverage by the end of the task.
+- Prefer multi-session system tests for Hotwire live-update behavior instead of spying on internal broadcast calls.
+- For host/player live update scenarios, assert user-visible content first (for example joined player names or visible count text) instead of relying on implementation-specific DOM hooks when possible.
+- Prefer model-level Turbo broadcast tests using `ActionCable::TestHelper` (`capture_broadcasts` / `broadcasts`) for asserting correct broadcasts.

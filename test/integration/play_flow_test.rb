@@ -64,6 +64,20 @@ class PlayFlowTest < ActionDispatch::IntegrationTest
     assert_select "input[name='name']", count: 0
   end
 
+  test "reposting as the same returning user does not create another participant" do
+    game = games(:waiting_game)
+
+    post play_path(code: game.code), params: { name: "Charlie" }
+    follow_redirect!
+
+    assert_no_difference "Participant.count" do
+      post play_path(code: game.code), params: { name: "Charlie Updated" }
+    end
+
+    assert_redirected_to play_path(code: game.code)
+    assert_equal "Charlie Updated", User.find_by(session_token: session[:user_session_token]).name
+  end
+
   test "invalid game code returns 404" do
     get play_path(code: "XXXXXX")
     assert_response :not_found

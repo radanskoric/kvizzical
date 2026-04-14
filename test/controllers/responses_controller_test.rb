@@ -23,6 +23,22 @@ class ResponsesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to play_path(code: @game.code)
   end
 
+  test "finishes the question when all players have answered" do
+    game = Game.create!(quiz: quizzes(:ruby_trivia))
+    post play_path(code: game.code), params: { name: "Solo Responder" }
+    game.start!
+
+    post responses_path, params: {
+      game_code: game.code,
+      question_id: game.current_question.id,
+      answer_id: answers(:mvc_correct).id
+    }
+
+    game.reload
+    assert game.reviewing?
+    assert_nil game.question_opened_at
+  end
+
   test "rejects duplicate response for same question" do
     post responses_path, params: {
       game_code: @game.code,
@@ -62,6 +78,32 @@ class ResponsesControllerTest < ActionDispatch::IntegrationTest
       post responses_path, params: {
         game_code: @game.code,
         question_id: @question.id,
+        answer_id: @correct_answer.id
+      }
+    end
+
+    assert_redirected_to play_path(code: @game.code)
+  end
+
+  test "rejects response when question has no opened at timestamp" do
+    @game.update!(question_opened_at: nil)
+
+    assert_no_difference "Response.count" do
+      post responses_path, params: {
+        game_code: @game.code,
+        question_id: @question.id,
+        answer_id: @correct_answer.id
+      }
+    end
+
+    assert_redirected_to play_path(code: @game.code)
+  end
+
+  test "rejects response when question id is invalid" do
+    assert_no_difference "Response.count" do
+      post responses_path, params: {
+        game_code: @game.code,
+        question_id: -1,
         answer_id: @correct_answer.id
       }
     end

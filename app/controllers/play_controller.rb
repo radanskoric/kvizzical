@@ -19,8 +19,8 @@ class PlayController < ApplicationController
       user.save!
     end
 
-    participant = @game.participants.find_or_create_by!(user: user)
-    @game.broadcast_player_list if participant.previously_new_record?
+    @game.participants.find_or_create_by!(user: user)
+    @game.broadcast_game_state
     redirect_to play_path(code: @game.code)
   end
 

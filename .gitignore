@@ -7,6 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
+# And installed node libs
+node_modules
+
 # Ignore all environment files.
 /.env*
 
@@ -39,3 +42,4 @@
 !/app/assets/builds/.keep
 
 .windsurf
+.vscode
