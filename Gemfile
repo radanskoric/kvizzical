@@ -37,6 +37,14 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+gem "reactionview"
+gem "herb", "~> 0.9"
+gem "litestream", "~> 0.14.0"
+gem "amazing_print"
+gem "dockerfile-rails", ">= 1.7", group: :development
+
+gem "rqrcode", "~> 3.2"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -54,26 +62,17 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  gem "log_bench"
+  gem "letter_opener"
+  gem "letter_opener_web", "~> 3.0"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-end
-gem "reactionview"
-gem "herb", "~> 0.9"
-gem "litestream", "~> 0.14.0"
-gem "amazing_print"
-gem "dockerfile-rails", ">= 1.7", group: :development
 
-group :development, :test do
+  gem "simplecov", github: "simplecov-ruby/simplecov"
 end
 
-group :development do
-  gem "log_bench"
-  gem "letter_opener"
-  gem "letter_opener_web", "~> 3.0"
-end
-
-gem "rqrcode", "~> 3.2"
