@@ -30,6 +30,11 @@
       </div>
 
       <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Scan to Join</p>
+        <%= qr_code_svg(play_url(code: game.code), size: 200) %>
+      </div>
+
+      <div>
         <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Players</p>
         <p class="text-2xl font-bold text-gray-900" data-player-count><%= game.participants.count %></p>
       </div>
@@ -65,6 +70,16 @@
     <% question = game.current_question %>
     <% correct_answer = question.answers.find_by(correct: true) %>
     <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-8 mb-6 space-y-6">
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">Game Code</p>
+        <p class="text-3xl font-mono font-bold tracking-widest text-red-600" data-game-code><%= game.code %></p>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Scan to Join</p>
+        <%= qr_code_svg(play_url(code: game.code), size: 200) %>
+      </div>
+
       <div>
         <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Question</p>
         <p class="text-xl font-semibold text-gray-900"><%= question.body %></p>

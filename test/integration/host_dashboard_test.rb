@@ -20,6 +20,36 @@ class HostDashboardTest < ActionDispatch::IntegrationTest
     assert_select "[data-player-count]", text: /#{game.participants.count}/
   end
 
+  test "shows join code and QR prompt when game is active" do
+    game = games(:active_game)
+    get game_path(game)
+
+    assert_select "[data-game-code]", text: game.code
+    assert_select "p", text: "Scan to Join"
+    assert_select "svg", minimum: 1
+  end
+
+  test "shows join code and QR prompt when game is reviewing" do
+    game = games(:active_game)
+    game.finish_question!
+
+    get game_path(game)
+
+    assert_select "[data-game-code]", text: game.code
+    assert_select "p", text: "Scan to Join"
+    assert_select "svg", minimum: 1
+  end
+
+  test "does not show QR prompt when game is finished" do
+    game = games(:active_game)
+    game.update!(status: :finished, current_question: nil, question_opened_at: nil)
+
+    get game_path(game)
+
+    assert_select "[data-game-code]", text: game.code
+    assert_select "p", text: "Scan to Join", count: 0
+  end
+
   test "shows start button when game is waiting" do
     game = games(:waiting_game)
     get game_path(game)
