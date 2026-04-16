@@ -1,7 +1,11 @@
+<% password_digest = BCrypt::Password.create("password") %>
+
 alice:
   name: "Alice"
   session_token: "alice_token_123456789012"
+  password_digest: <%= password_digest %>
 
 bob:
   name: "Bob"
   session_token: "bob_token_1234567890123"
+  password_digest: <%= password_digest %>

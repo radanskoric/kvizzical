@@ -50,4 +50,9 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "Anonymous", participant.name
     assert_equal 1, participant.responses.count
   end
+
+  test "downcases and strips email_address" do
+    user = User.new(email_address: " DOWNCASED@EXAMPLE.COM ")
+    assert_equal("downcased@example.com", user.email_address)
+  end
 end

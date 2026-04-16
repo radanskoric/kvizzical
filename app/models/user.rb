@@ -1,5 +1,9 @@
 class User < ApplicationRecord
   has_many :participants, dependent: :nullify, inverse_of: :user
+  has_many :sessions, dependent: :destroy
+  has_secure_password
+
+  normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   validates :name, presence: true
 
