@@ -16,6 +16,37 @@ class GameFlowTest < ApplicationSystemTestCase
     assert_text "Waiting for the host to start"
   end
 
+  test "waiting player receives the first question when the host starts the game" do
+    game = Game.create!(quiz: quizzes(:ruby_trivia))
+    first_question = game.quiz.questions.order(:position).first
+
+    Capybara.using_session(:player) do
+      visit play_path(code: game.code)
+      fill_in "name", with: "Waiting Player"
+      click_button "Join"
+
+      assert_text "Welcome, Waiting Player"
+      assert_text "Waiting for the host to start"
+      assert_no_text first_question.body
+      connect_turbo_cable_stream_sources
+    end
+
+    Capybara.using_session(:host) do
+      sign_in_as(users(:alice))
+      visit game_path(game)
+      connect_turbo_cable_stream_sources
+
+      click_button "Start Quiz"
+
+      assert_text first_question.body
+    end
+
+    Capybara.using_session(:player) do
+      assert_text first_question.body
+      assert_no_text "Waiting for the host to start"
+    end
+  end
+
   test "host waiting view updates when a player joins from another browser session" do
     game = Game.create!(quiz: quizzes(:ruby_trivia))
 
