@@ -1,7 +1,9 @@
 class ResponsesController < ApplicationController
+  allow_unauthenticated_access
+
   def create
     game = Game.find_by!(code: params[:game_code])
-    user = User.find_by(session_token: session[:user_session_token])
+    user = current_player_user
     participant = game.participants.find_by(user: user)
 
     if game.active? && participant && within_deadline?(game)

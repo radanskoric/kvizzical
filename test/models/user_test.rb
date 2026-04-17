@@ -6,6 +6,20 @@ class UserTest < ActiveSupport::TestCase
     assert user.valid?
   end
 
+  test "registered user requires a password" do
+    user = User.new(name: "Alice", email_address: "alice@example.com")
+
+    assert_not user.valid?
+    assert_includes user.errors[:password], "can't be blank"
+  end
+
+  test "registered user requires matching password confirmation" do
+    user = User.new(name: "Alice", email_address: "alice@example.com", password: "password", password_confirmation: "different")
+
+    assert_not user.valid?
+    assert_includes user.errors[:password_confirmation], "doesn't match Password"
+  end
+
   test "invalid without a name" do
     user = User.new(name: nil)
     assert_not user.valid?

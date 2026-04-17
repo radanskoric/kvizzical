@@ -1,6 +1,4 @@
 TODO:
-- Use auth generator for authentication.
-- Require registering to host a game.
 - Move auto progress to background job.
 - Check for race condition between manual finish question and timer.
 - Test for responses count increasing.

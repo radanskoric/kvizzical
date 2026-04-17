@@ -78,6 +78,26 @@ class PlayFlowTest < ActionDispatch::IntegrationTest
     assert_equal "Charlie Updated", User.find_by(session_token: session[:user_session_token]).name
   end
 
+  test "signed in user joins without creating an anonymous session token" do
+    game = games(:waiting_game)
+
+    sign_in_as(users(:alice))
+
+    assert_no_difference "User.count" do
+      assert_difference "Participant.count", 1 do
+        post play_path(code: game.code), params: { name: "Alice Player" }
+      end
+    end
+
+    assert_redirected_to play_path(code: game.code)
+    assert_nil session[:user_session_token]
+    assert_equal users(:alice), game.participants.order(:id).last.user
+
+    get play_path(code: game.code)
+    assert_response :success
+    assert_select "input[name='name']", count: 0
+  end
+
   test "invalid game code returns 404" do
     get play_path(code: "XXXXXX")
     assert_response :not_found

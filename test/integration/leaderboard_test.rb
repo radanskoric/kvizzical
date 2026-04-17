@@ -1,6 +1,10 @@
 require "test_helper"
 
 class LeaderboardTest < ActionDispatch::IntegrationTest
+  setup do
+    sign_in_as(users(:alice))
+  end
+
   test "host dashboard shows leaderboard when game is reviewing" do
     game = games(:active_game)
     alice = participants(:alice_in_game)

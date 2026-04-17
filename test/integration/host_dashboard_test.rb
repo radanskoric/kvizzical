@@ -1,6 +1,10 @@
 require "test_helper"
 
 class HostDashboardTest < ActionDispatch::IntegrationTest
+  setup do
+    sign_in_as(users(:alice))
+  end
+
   test "shows game code on host dashboard" do
     game = games(:waiting_game)
     get game_path(game)

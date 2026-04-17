@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_03_063724) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_15_203352) do
   create_table "answers", force: :cascade do |t|
     t.string "body", null: false
     t.boolean "correct", default: false, null: false
@@ -74,11 +74,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_063724) do
     t.index ["question_id"], name: "index_responses_on_question_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "email_address"
     t.string "name", null: false
+    t.string "password_digest"
     t.string "session_token", null: false
     t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["session_token"], name: "index_users_on_session_token", unique: true
   end
 
@@ -91,4 +103,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_063724) do
   add_foreign_key "responses", "answers"
   add_foreign_key "responses", "participants"
   add_foreign_key "responses", "questions"
+  add_foreign_key "sessions", "users"
 end

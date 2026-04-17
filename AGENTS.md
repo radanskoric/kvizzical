@@ -40,6 +40,8 @@ test/
 config/
 ├── routes.rb        # Application routes
 ├── database.yml     # Database config (SQLite3)
+db/
+├── migrate/         # Schema changes, including auth/session migrations
 ```
 
 ## Key Files
@@ -48,6 +50,13 @@ config/
 - `db/schema.rb` — Database schema
 - `Gemfile` — Dependencies
 - `Procfile.dev` — Development process configuration (web + tailwind watcher)
+- `app/controllers/concerns/authentication.rb` — Cookie-backed authenticated session handling
+- `app/controllers/application_controller.rb` — Shared authenticated/anonymous player resolution
+- `app/controllers/registrations_controller.rb` — Account creation and anonymous-to-registered upgrades
+- `app/controllers/play_controller.rb` — Public quiz participation flow
+- `app/controllers/games_controller.rb` — Host-only quiz control flow
+- `app/models/user.rb` — Shared anonymous participant and registered account model
+- `app/models/session.rb` — Authenticated browser sessions
 
 ## Development Tools
 
@@ -63,6 +72,15 @@ config/
 - Do not add/remove comments unless asked
 - Keep changes minimal and focused
 
+## Authentication & Session Model
+
+- Registered accounts use `User` plus cookie-backed `Session` records via `Authentication`
+- Anonymous quiz participants still use the ad hoc `session[:user_session_token]` flow
+- `ApplicationController#current_player_user` prefers the authenticated user and falls back to the anonymous participant user
+- Registration requires `name`, `email_address`, `password`, and `password_confirmation`
+- Registering while anonymous should upgrade the anonymous `User` when possible and prefill the registration name from the anonymous session
+- Hosting quiz games and viewing the host dashboard require authentication; joining and playing remain public
+
 ## Testing Guidelines
 
 - Use Minitest (not RSpec)
@@ -72,6 +90,11 @@ config/
 - Test files mirror `app/` structure under `test/`
 - All changes must preserve or restore `100%` line coverage and
 `100%` branch coverage by the end of the task.
+- After every change, once `bin/rails test` is green, also run `bin/rails test:system` and ensure it is green.
 - Prefer multi-session system tests for Hotwire live-update behavior instead of spying on internal broadcast calls.
+- In host/player scenarios, sign the host session in explicitly before visiting `game_path` or posting host actions.
+- Keep anonymous play coverage intact: joining and answering should continue to work without registration.
+- If a major new user-facing feature is added, consider adding or extending a system test for it.
+- For registration coverage, assert both fresh sign-up and upgrading an anonymous participant into a registered account.
 - For host/player live update scenarios, assert user-visible content first (for example joined player names or visible count text) instead of relying on implementation-specific DOM hooks when possible.
 - Prefer model-level Turbo broadcast tests using `ActionCable::TestHelper` (`capture_broadcasts` / `broadcasts`) for asserting correct broadcasts.

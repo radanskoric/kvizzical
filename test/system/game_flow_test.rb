@@ -20,6 +20,7 @@ class GameFlowTest < ApplicationSystemTestCase
     game = Game.create!(quiz: quizzes(:ruby_trivia))
 
     Capybara.using_session(:host) do
+      sign_in_as(users(:alice))
       visit game_path(game)
 
       assert_text "PLAYERS JOINED\n0"
@@ -46,6 +47,7 @@ class GameFlowTest < ApplicationSystemTestCase
     game = Game.create!(quiz: quizzes(:ruby_trivia))
 
     Capybara.using_session(:host) do
+      sign_in_as(users(:alice))
       visit game_path(game)
       click_button "Start Quiz"
 

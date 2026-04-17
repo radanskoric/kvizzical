@@ -29,6 +29,15 @@
         <a href="<%= root_path %>" class="text-2xl font-extrabold tracking-tight text-red-600 hover:text-red-500 transition">
           Kvizzical
         </a>
+        <div class="flex items-center gap-3 text-sm font-medium">
+          <% if authenticated? %>
+            <span class="hidden text-gray-500 sm:inline"><%= current_user.name %></span>
+            <%= button_to "Sign out", session_path, method: :delete, class: "rounded-xl border border-gray-200 bg-white px-4 py-2 text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
+          <% else %>
+            <%= link_to "Log in", new_session_path, class: "rounded-xl border border-gray-200 bg-white px-4 py-2 text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
+            <%= link_to "Register", new_registration_path, class: "rounded-xl bg-red-600 px-4 py-2 text-white hover:bg-red-500 transition" %>
+          <% end %>
+        </div>
       </div>
     </header>
 

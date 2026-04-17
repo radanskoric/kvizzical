@@ -1,7 +1,11 @@
 require "test_helper"
 
 class GamesControllerTest < ActionDispatch::IntegrationTest
-  test "show renders successfully" do
+  setup do
+    sign_in_as(users(:alice))
+  end
+
+  test "show renders successfully for an authenticated host" do
     game = games(:waiting_game)
 
     get game_path(game)
@@ -9,16 +13,35 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "show redirects unauthenticated requests to login" do
+    sign_out
+
+    get game_path(games(:waiting_game))
+
+    assert_redirected_to new_session_path
+  end
+
   test "create builds a game for the selected quiz" do
     quiz = quizzes(:ruby_trivia)
 
-    assert_difference ["Game.count", "quiz.games.count"], 1 do
+    assert_difference [ "Game.count", "quiz.games.count" ], 1 do
       post games_path, params: { quiz_id: quiz.id }
     end
 
     created_game = Game.order(:id).last
     assert_redirected_to game_path(created_game)
     assert_equal quiz, created_game.quiz
+  end
+
+  test "create redirects unauthenticated users" do
+    quiz = quizzes(:ruby_trivia)
+    sign_out
+
+    assert_no_difference "Game.count" do
+      post games_path, params: { quiz_id: quiz.id }
+    end
+
+    assert_redirected_to new_session_path
   end
 
   test "start transitions game from waiting to active and opens first question" do

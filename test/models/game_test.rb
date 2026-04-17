@@ -139,7 +139,7 @@ class GameTest < ActiveSupport::TestCase
 
   test "generate_code retries when a generated code already exists" do
     existing = Game.create!(quiz: quizzes(:ruby_trivia), code: "TAKEN1")
-    generated_codes = [existing.code, "FRESH2"]
+    generated_codes = [ existing.code, "FRESH2" ]
 
     SecureRandom.singleton_class.class_eval do
       alias_method :original_alphanumeric_for_test, :alphanumeric

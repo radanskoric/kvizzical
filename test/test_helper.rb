@@ -1,6 +1,5 @@
 require "simplecov"
 SimpleCov.command_name "Rails Tests"
-SimpleCov.start
 
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"

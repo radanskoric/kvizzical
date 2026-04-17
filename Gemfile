@@ -75,4 +75,3 @@ group :test do
 
   gem "simplecov", github: "simplecov-ruby/simplecov"
 end
-

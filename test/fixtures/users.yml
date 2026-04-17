@@ -2,10 +2,12 @@
 
 alice:
   name: "Alice"
+  email_address: "alice@example.com"
   session_token: "alice_token_123456789012"
   password_digest: <%= password_digest %>
 
 bob:
   name: "Bob"
+  email_address: "bob@example.com"
   session_token: "bob_token_1234567890123"
   password_digest: <%= password_digest %>

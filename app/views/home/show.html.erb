@@ -2,6 +2,15 @@
   <h1 class="text-5xl font-extrabold tracking-tight text-gray-900 mb-2">Kvizzical</h1>
   <p class="text-lg text-gray-500 mb-10">Join a live quiz</p>
 
+  <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+    <% if authenticated? %>
+      <%= button_to "Sign out", session_path, method: :delete, class: "w-full sm:w-auto rounded-xl border-2 border-gray-200 bg-white px-6 py-3 text-base font-semibold text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
+    <% else %>
+      <%= link_to "Log in", new_session_path, class: "w-full sm:w-auto rounded-xl border-2 border-gray-200 bg-white px-6 py-3 text-base font-semibold text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
+      <%= link_to "Register", new_registration_path, class: "w-full sm:w-auto rounded-xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-red-500 transition" %>
+    <% end %>
+  </div>
+
   <%= form_tag(nil, method: :get, id: "join-form", class: "space-y-4") do %>
     <input
       type="text"
@@ -19,14 +28,25 @@
 
   <div class="mt-12 pt-8 border-t border-gray-200 w-full">
     <h2 class="text-lg font-semibold text-gray-700 mb-4">Host a Quiz</h2>
-    <div class="space-y-3">
-      <% Quiz.all.each do |quiz| %>
-        <%= link_to games_path(quiz_id: quiz.id), data: { turbo_method: :post }, class: "block w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg font-medium text-gray-800 hover:border-red-500 hover:bg-red-50 transition text-left" do %>
-          <span class="font-semibold"><%= quiz.title %></span>
-          <span class="text-sm text-gray-500 ml-2"><%= quiz.questions.count %> questions</span>
+    <% if authenticated? %>
+      <div class="space-y-3">
+        <% Quiz.all.each do |quiz| %>
+          <%= link_to games_path(quiz_id: quiz.id), data: { turbo_method: :post }, class: "block w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg font-medium text-gray-800 hover:border-red-500 hover:bg-red-50 transition text-left" do %>
+            <span class="font-semibold"><%= quiz.title %></span>
+            <span class="text-sm text-gray-500 ml-2"><%= quiz.questions.count %> questions</span>
+          <% end %>
         <% end %>
-      <% end %>
-    </div>
+      </div>
+    <% else %>
+      <div class="rounded-xl border border-gray-200 bg-white px-6 py-6 text-left shadow-sm">
+        <p class="text-sm font-medium uppercase tracking-wide text-gray-400">Registered hosts only</p>
+        <p class="mt-2 text-gray-600">Create an account or log in to start a quiz for your players.</p>
+        <div class="mt-4 flex flex-col gap-3 sm:flex-row">
+          <%= link_to "Log in to host", new_session_path, class: "w-full sm:w-auto rounded-xl border-2 border-gray-200 bg-white px-5 py-3 text-center font-semibold text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
+          <%= link_to "Register to host", new_registration_path, class: "w-full sm:w-auto rounded-xl bg-red-600 px-5 py-3 text-center font-semibold text-white hover:bg-red-500 transition" %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
 

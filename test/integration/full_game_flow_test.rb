@@ -24,11 +24,14 @@ class FullGameFlowTest < ActionDispatch::IntegrationTest
     assert_select "[data-game-status='waiting']"
 
     # Host starts the game
+    sign_in_as(users(:alice))
     post start_game_path(game)
     assert_redirected_to game_path(game)
     game.reload
     assert game.active?
     assert_equal question1, game.current_question
+
+    sign_out
 
     # Player sees question
     get play_path(code: game.code)
@@ -55,6 +58,7 @@ class FullGameFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     # Host finishes the question, then advances
+    sign_in_as(users(:alice))
     post finish_question_game_path(game)
     game.reload
     assert game.reviewing?
@@ -65,6 +69,8 @@ class FullGameFlowTest < ActionDispatch::IntegrationTest
     assert game.active?
     assert_equal question2, game.current_question
 
+    sign_out
+
     # Player sees new question
     get play_path(code: game.code)
     assert_select "[data-question-body]", text: question2.body
@@ -74,16 +80,23 @@ class FullGameFlowTest < ActionDispatch::IntegrationTest
       game.reload
       break if game.finished?
       if game.active?
+        sign_in_as(users(:alice))
         post finish_question_game_path(game)
+        sign_out
       elsif game.reviewing?
+        sign_in_as(users(:alice))
         post advance_game_path(game)
+        sign_out
       end
     end
     assert game.finished?
 
     # Host sees game over
+    sign_in_as(users(:alice))
     get game_path(game)
     assert_select "[data-leaderboard]"
+
+    sign_out
 
     # Player sees game over with leaderboard
     get play_path(code: game.code)
@@ -115,6 +128,7 @@ class FullGameFlowTest < ActionDispatch::IntegrationTest
     )
 
     # Host sees 2/2 responses
+    sign_in_as(users(:alice))
     get game_path(game)
     assert_select "[data-response-count]", text: /2\s*\/\s*2/
   end
@@ -129,9 +143,12 @@ class FullGameFlowTest < ActionDispatch::IntegrationTest
 
     post play_path(code: game.code), params: { name: "LatePlayer" }
 
+    sign_in_as(users(:alice))
     post start_game_path(game)
     game.reload
     question = game.current_question
+
+    sign_out
 
     # Set question_opened_at far in the past
     game.update!(question_opened_at: 1.hour.ago)

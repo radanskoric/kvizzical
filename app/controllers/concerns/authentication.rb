@@ -3,7 +3,7 @@ module Authentication
 
   included do
     before_action :require_authentication
-    helper_method :authenticated?
+    helper_method :authenticated?, :current_user
   end
 
   class_methods do
@@ -15,6 +15,11 @@ module Authentication
   private
     def authenticated?
       resume_session
+    end
+
+    def current_user
+      resume_session
+      Current.user
     end
 
     def require_authentication
@@ -41,12 +46,14 @@ module Authentication
     def start_new_session_for(user)
       user.sessions.create!(user_agent: request.user_agent, ip_address: request.remote_ip).tap do |session|
         Current.session = session
+        self.session.delete(:user_session_token)
         cookies.signed.permanent[:session_id] = { value: session.id, httponly: true, same_site: :lax }
       end
     end
 
     def terminate_session
       Current.session.destroy
+      Current.session = nil
       cookies.delete(:session_id)
     end
 end
