@@ -239,6 +239,69 @@ class QuizImportTaskTest < ActiveSupport::TestCase
     assert_equal question_body, quiz.questions.first.body
   end
 
+  test "imports references for a question" do
+    quiz_path = write_quiz_file("references.yml", [
+      {
+        "question" => "What does MVC stand for?",
+        "answers" => [ "Model-View-Controller", "Most Valuable Coder" ],
+        "correct" => 0,
+        "references" => [
+          "https://guides.rubyonrails.org/action_controller_overview.html",
+          "https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller"
+        ]
+      }
+    ])
+
+    capture_io do
+      @task.invoke(quiz_path)
+    end
+
+    quiz = Quiz.find_by!(title: "References")
+
+    assert_equal [
+      "https://guides.rubyonrails.org/action_controller_overview.html",
+      "https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller"
+    ], quiz.questions.first.references.order(:id).pluck(:url)
+  end
+
+  test "raises error when references is not an array" do
+    quiz_path = write_quiz_file("bad_references.yml", [
+      {
+        "question" => "What does MVC stand for?",
+        "answers" => [ "Model-View-Controller", "Most Valuable Coder" ],
+        "correct" => 0,
+        "references" => "https://guides.rubyonrails.org/action_controller_overview.html"
+      }
+    ])
+
+    error = assert_raises(ArgumentError) do
+      capture_io do
+        @task.invoke(quiz_path)
+      end
+    end
+
+    assert_equal "Question #1 references must be an array", error.message
+  end
+
+  test "raises error when a reference is blank" do
+    quiz_path = write_quiz_file("blank_reference.yml", [
+      {
+        "question" => "What does MVC stand for?",
+        "answers" => [ "Model-View-Controller", "Most Valuable Coder" ],
+        "correct" => 0,
+        "references" => [ "  " ]
+      }
+    ])
+
+    error = assert_raises(ArgumentError) do
+      capture_io do
+        @task.invoke(quiz_path)
+      end
+    end
+
+    assert_equal "Question #1 has a blank reference", error.message
+  end
+
   test "raises error when quiz has existing games" do
     quiz_path = write_quiz_file("with_games.yml", [
       {

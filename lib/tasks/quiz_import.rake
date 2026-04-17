@@ -43,6 +43,16 @@ namespace :quiz do
           time_limit_seconds: time_limit_seconds
         )
 
+        references = entry["references"]
+        raise ArgumentError, "Question ##{question_index + 1} references must be an array" if references.present? && !references.is_a?(Array)
+
+        Array(references).each do |reference_url|
+          reference_text = reference_url.to_s.strip
+          raise ArgumentError, "Question ##{question_index + 1} has a blank reference" if reference_text.blank?
+
+          question.references.create!(url: reference_text)
+        end
+
         answers.each_with_index do |answer_body, answer_index|
           answer_text = answer_body.to_s.strip
           raise ArgumentError, "Question ##{question_index + 1} has a blank answer" if answer_text.blank?

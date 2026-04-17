@@ -92,6 +92,8 @@
         </div>
       </div>
 
+      <%= render "shared/question_references", question: question %>
+
       <% next_question = game.quiz.questions.order(:position).where("position > ?", question.position).first %>
       <%= form_with url: advance_game_path(game), method: :post, class: "pt-2" do %>
         <button type="submit" class="rounded-xl bg-red-600 px-8 py-4 text-xl font-semibold text-white shadow-sm hover:bg-red-500 transition">

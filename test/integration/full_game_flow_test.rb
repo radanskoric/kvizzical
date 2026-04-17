@@ -104,6 +104,46 @@ class FullGameFlowTest < ActionDispatch::IntegrationTest
     assert_select "[data-leaderboard]"
   end
 
+  test "player review screen shows references for the current question" do
+    game = games(:active_game)
+    question = game.current_question
+    question.references.create!(url: "https://guides.rubyonrails.org/action_controller_overview.html")
+    question.references.create!(url: "https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller")
+
+    post play_path(code: game.code), params: { name: "Reference Player" }
+    participant = game.participants.find_by!(user: User.find_by!(session_token: session[:user_session_token]))
+    correct_answer = question.answers.find_by!(correct: true)
+
+    post responses_path, params: {
+      game_code: game.code,
+      question_id: question.id,
+      answer_id: correct_answer.id
+    }
+
+    sign_in_as(users(:alice))
+    post finish_question_game_path(game)
+    sign_out
+
+    get play_path(code: game.code)
+
+    assert_select "details", text: /References/
+    assert_select "a[href='https://guides.rubyonrails.org/action_controller_overview.html'][target='_blank']", text: "https://guides.rubyonrails.org/action_controller_overview.html"
+    assert_select "a[href='https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'][target='_blank']", text: "https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller"
+  end
+
+  test "host review screen shows references for the current question" do
+    game = games(:active_game)
+    question = game.current_question
+    question.references.create!(url: "https://guides.rubyonrails.org/action_controller_overview.html")
+
+    sign_in_as(users(:alice))
+    post finish_question_game_path(game)
+    get game_path(game)
+
+    assert_select "details", text: /References/
+    assert_select "a[href='https://guides.rubyonrails.org/action_controller_overview.html'][target='_blank']", text: "https://guides.rubyonrails.org/action_controller_overview.html"
+  end
+
   test "multiple players join and answer" do
     game = games(:active_game)
     question = game.current_question

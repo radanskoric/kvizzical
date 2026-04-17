@@ -67,6 +67,8 @@
       <% end %>
     </div>
 
+    <%= render "shared/question_references", question: question %>
+
     <%= render "shared/leaderboard", game: game %>
 
   <% elsif game.finished? %>

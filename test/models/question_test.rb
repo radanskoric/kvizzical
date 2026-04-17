@@ -37,6 +37,26 @@ class QuestionTest < ActiveSupport::TestCase
     assert_respond_to question, :answers
   end
 
+  test "has many references" do
+    question = questions(:mvc_question)
+    assert_respond_to question, :references
+  end
+
+  test "destroys associated references when destroyed" do
+    question = quizzes(:ruby_trivia).questions.create!(
+      body: "Fresh question?",
+      position: 99,
+      time_limit_seconds: 15
+    )
+    reference = question.references.create!(url: "https://ruby-doc.org")
+
+    assert_difference "Reference.count", -1 do
+      question.destroy
+    end
+
+    assert_not Reference.exists?(reference.id)
+  end
+
   test "orders by position" do
     quiz = quizzes(:ruby_trivia)
     positions = quiz.questions.pluck(:position)
