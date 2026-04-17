@@ -5,7 +5,9 @@ class GamesController < ApplicationController
   end
 
   def create
-    quiz = Quiz.find(params[:quiz_id])
+    quiz = current_user.created_quizzes.find_by(id: params[:quiz_id])
+    return head :forbidden unless quiz
+
     game = quiz.games.create!
     redirect_to game_path(game)
   end
@@ -28,6 +30,7 @@ class GamesController < ApplicationController
   private
 
   def set_game
-    @game = Game.find(params[:id])
+    @game = Game.joins(:quiz).find_by(id: params[:id], quizzes: { creator_id: current_user.id })
+    head :forbidden unless @game
   end
 end

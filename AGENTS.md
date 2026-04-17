@@ -71,6 +71,7 @@ db/
 - Use Tailwind CSS classes exclusively for styling
 - Do not add/remove comments unless asked
 - Keep changes minimal and focused
+- Always run `bin/rubocop -A` to auto-correct style issues. Fix any remaining issues yourself.
 
 ## Authentication & Session Model
 

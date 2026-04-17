@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_112600) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_115500) do
   create_table "answers", force: :cascade do |t|
     t.string "body", null: false
     t.boolean "correct", default: false, null: false
@@ -56,8 +56,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_112600) do
 
   create_table "quizzes", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.integer "creator_id"
     t.string "title"
     t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_quizzes_on_creator_id"
   end
 
   create_table "references", force: :cascade do |t|
@@ -108,6 +110,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_112600) do
   add_foreign_key "participants", "games"
   add_foreign_key "participants", "users"
   add_foreign_key "questions", "quizzes"
+  add_foreign_key "quizzes", "users", column: "creator_id", on_delete: :nullify
   add_foreign_key "references", "questions"
   add_foreign_key "responses", "answers"
   add_foreign_key "responses", "participants"

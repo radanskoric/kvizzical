@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_many :created_quizzes, class_name: "Quiz", foreign_key: :creator_id, dependent: :nullify, inverse_of: :creator
   has_many :participants, dependent: :nullify, inverse_of: :user
   has_many :sessions, dependent: :destroy
   has_secure_password validations: false

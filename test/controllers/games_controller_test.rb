@@ -44,6 +44,27 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
+  test "create returns forbidden for a quiz owned by another user" do
+    quiz = quizzes(:ruby_trivia)
+    sign_out
+    sign_in_as(users(:bob))
+
+    assert_no_difference "Game.count" do
+      post games_path, params: { quiz_id: quiz.id }
+    end
+
+    assert_response :forbidden
+  end
+
+  test "show returns forbidden for a game owned by another user" do
+    sign_out
+    sign_in_as(users(:bob))
+
+    get game_path(games(:waiting_game))
+
+    assert_response :forbidden
+  end
+
   test "start transitions game from waiting to active and opens first question" do
     game = games(:waiting_game)
     assert game.waiting?
@@ -55,6 +76,18 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert game.active?
     assert_equal game.quiz.questions.order(:position).first, game.current_question
     assert_not_nil game.question_opened_at
+  end
+
+  test "start returns forbidden for a game owned by another user" do
+    game = games(:waiting_game)
+    sign_out
+    sign_in_as(users(:bob))
+
+    post start_game_path(game)
+
+    assert_response :forbidden
+    game.reload
+    assert game.waiting?
   end
 
   test "start does nothing if game is already active" do
