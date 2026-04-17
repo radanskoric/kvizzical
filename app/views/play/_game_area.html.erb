@@ -17,7 +17,7 @@
          data-countdown-opened-at-value="<%= game.question_opened_at.iso8601(3) %>">
       </p>
     </div>
-    <h2 class="text-2xl font-bold text-gray-900 mb-6" data-question-body><%= question.body %></h2>
+    <h2 class="text-2xl font-bold text-gray-900 mb-6" data-question-body><%= render_question(question) %></h2>
 
     <div id="answer_area" class="space-y-3">
       <% if existing_response %>
@@ -43,7 +43,7 @@
     <% question = game.current_question %>
     <% correct_answer = question.answers.find_by(correct: true) %>
     <% player_response = participant.responses.find_by(question: question) %>
-    <h2 class="text-2xl font-bold text-gray-900 mb-4"><%= question.body %></h2>
+    <h2 class="text-2xl font-bold text-gray-900 mb-4"><%= render_question(question) %></h2>
 
     <div class="space-y-3 mb-6">
       <% question.answers.each do |answer| %>

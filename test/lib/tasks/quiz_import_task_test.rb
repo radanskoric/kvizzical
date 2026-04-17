@@ -209,6 +209,36 @@ class QuizImportTaskTest < ActiveSupport::TestCase
     end
   end
 
+  test "imports question bodies with multi-line code blocks preserving formatting" do
+    question_body = <<~MARKDOWN
+      What does this print?
+
+      ```ruby
+      def greet(name)
+        puts "Hello, #{name}!"
+      end
+
+      greet("world")
+      ```
+    MARKDOWN
+
+    quiz_path = write_quiz_file("code_blocks.yml", [
+      {
+        "question" => question_body,
+        "answers" => [ "Hello, world!", "Hello, !" ],
+        "correct" => 0
+      }
+    ])
+
+    capture_io do
+      @task.invoke(quiz_path)
+    end
+
+    quiz = Quiz.find_by!(title: "Code Blocks")
+
+    assert_equal question_body, quiz.questions.first.body
+  end
+
   test "raises error when quiz has existing games" do
     quiz_path = write_quiz_file("with_games.yml", [
       {
