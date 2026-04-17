@@ -26,8 +26,8 @@ namespace :quiz do
         entry = raw_entry.is_a?(Hash) ? raw_entry.stringify_keys : nil
         raise ArgumentError, "Question ##{question_index + 1} must be a mapping" unless entry
 
-        body = entry["question"].to_s.strip
-        raise ArgumentError, "Question ##{question_index + 1} is missing question text" if body.blank?
+        body = entry["question"].to_s
+        raise ArgumentError, "Question ##{question_index + 1} is missing question text" if body.strip.blank?
 
         answers = entry["answers"]
         raise ArgumentError, "Question ##{question_index + 1} must have at least one answer" unless answers.is_a?(Array) && answers.any?

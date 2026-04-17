@@ -51,7 +51,7 @@
 
       <div>
         <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Current Question</p>
-        <p class="text-xl font-semibold text-gray-900"><%= game.current_question.body %></p>
+        <p class="text-xl font-semibold text-gray-900"><%= render_question(game.current_question) %></p>
       </div>
 
       <div>
@@ -82,7 +82,7 @@
 
       <div>
         <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Question</p>
-        <p class="text-xl font-semibold text-gray-900"><%= question.body %></p>
+        <p class="text-xl font-semibold text-gray-900"><%= render_question(question) %></p>
       </div>
 
       <div>
