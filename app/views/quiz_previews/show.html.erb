@@ -1,0 +1,17 @@
+<div class="w-full max-w-2xl mx-auto text-center">
+  <div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-8 space-y-6">
+    <div>
+      <p class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Quiz Preview</p>
+      <h1 class="text-4xl font-extrabold tracking-tight text-gray-900"><%= @quiz.title %></h1>
+    </div>
+
+    <p class="text-lg text-gray-600">This is a preview view of the quiz, so you can step through the questions on your own without joining a live game.</p>
+
+    <div class="rounded-xl bg-gray-50 border border-gray-200 px-6 py-5">
+      <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Questions</p>
+      <p class="mt-2 text-3xl font-bold text-gray-900"><%= pluralize(@quiz.questions.count, "question") %></p>
+    </div>
+
+    <%= link_to "Start Quiz", quiz_preview_question_path(secret_preview_token: @quiz.secret_preview_token, position: 1), class: "inline-flex items-center justify-center rounded-xl bg-red-600 px-8 py-4 text-xl font-semibold text-white shadow-sm hover:bg-red-500 transition" %>
+  </div>
+</div>

@@ -11,6 +11,18 @@ class PlayControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "show creates participant and broadcasts when current_player_user exists without participant" do
+    game = games(:waiting_game)
+    user = users(:alice)
+    sign_in_as(user)
+
+    assert_difference "Participant.count", 1 do
+      get play_path(code: game.code)
+    end
+
+    assert_response :success
+  end
+
   test "create does not set session token when user is already authenticated" do
     game = games(:waiting_game)
     sign_in_as(users(:alice))

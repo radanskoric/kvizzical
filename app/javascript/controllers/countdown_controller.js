@@ -4,7 +4,8 @@ export default class extends Controller {
   static values = {
     seconds: Number,
     openedAt: String,
-    finishUrl: String
+    finishUrl: String,
+    redirectUrl: String
   }
 
   connect() {
@@ -39,8 +40,15 @@ export default class extends Controller {
   }
 
   triggerFinish() {
-    if (this.finished || !this.finishUrlValue) return
+    if (this.finished) return
     this.finished = true
+
+    if (this.hasRedirectUrlValue) {
+      window.location.assign(this.redirectUrlValue)
+      return
+    }
+
+    if (!this.finishUrlValue) return
 
     const csrfToken = document.querySelector("meta[name='csrf-token']")?.content
     fetch(this.finishUrlValue, {

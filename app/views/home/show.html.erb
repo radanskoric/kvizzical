@@ -31,10 +31,17 @@
     <% if authenticated? %>
       <div class="space-y-3">
         <% current_user.created_quizzes.each do |quiz| %>
-          <%= link_to games_path(quiz_id: quiz.id), data: { turbo_method: :post }, class: "block w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg font-medium text-gray-800 hover:border-red-500 hover:bg-red-50 transition text-left" do %>
-            <span class="font-semibold"><%= quiz.title %></span>
-            <span class="text-sm text-gray-500 ml-2"><%= quiz.questions.count %> questions</span>
-          <% end %>
+          <div class="w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-left shadow-sm">
+            <div>
+              <span class="font-semibold text-lg text-gray-800"><%= quiz.title %></span>
+              <span class="text-sm text-gray-500 ml-2"><%= quiz.questions.count %> questions</span>
+            </div>
+
+            <div class="mt-4 flex flex-col gap-3 sm:flex-row">
+              <%= link_to "Start", games_path(quiz_id: quiz.id), data: { turbo_method: :post }, class: "w-full sm:w-auto rounded-xl bg-red-600 px-5 py-3 text-center font-semibold text-white shadow-sm hover:bg-red-500 transition" %>
+              <%= link_to "Preview", quiz_preview_path(secret_preview_token: quiz.secret_preview_token), class: "w-full sm:w-auto rounded-xl border-2 border-gray-200 bg-white px-5 py-3 text-center font-semibold text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
+            </div>
+          </div>
         <% end %>
       </div>
     <% else %>

@@ -14,6 +14,13 @@ Rails.application.routes.draw do
 
   root "home#show"
 
+  scope "quiz/:secret_preview_token", as: :quiz_preview do
+    get "", to: "quiz_previews#show", as: ""
+    get "question/:position", to: "quiz_previews#question", as: :question
+    get "question/:position/answer/:answer_position", to: "quiz_previews#answer", as: :answer
+    get "end", to: "quiz_previews#end", as: :end
+  end
+
   get  "play/:code", to: "play#show", as: :play
   post "play/:code", to: "play#create"
 

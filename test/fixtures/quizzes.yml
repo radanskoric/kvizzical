@@ -1,3 +1,4 @@
 ruby_trivia:
   creator: alice
+  secret_preview_token: ruby-preview-token
   title: "Ruby Trivia"

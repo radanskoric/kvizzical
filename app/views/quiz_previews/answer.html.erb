@@ -1,0 +1,37 @@
+<div id="preview_answer_area" data-preview-status="reviewing" class="w-full max-w-md mx-auto text-center">
+  <h2 class="text-2xl font-bold text-gray-900 mb-4"><%= render_question(@question) %></h2>
+
+  <% if @selected_answer.nil? %>
+    <p class="text-gray-500 mb-4">Time ran out before you selected an answer.</p>
+  <% end %>
+
+  <div class="space-y-3 mb-6 text-left">
+    <% @answers.each_with_index do |answer, index| %>
+      <% is_correct = answer.correct? %>
+      <% was_chosen = @selected_answer_position == index + 1 %>
+      <div class="w-full rounded-xl border-2 px-6 py-4 text-lg font-medium
+        <%= if is_correct
+              'border-green-400 bg-green-50 text-green-700'
+            elsif was_chosen
+              'border-red-400 bg-red-50 text-red-700'
+            else
+              'border-gray-200 bg-white text-gray-400'
+            end %>">
+        <%= answer.body %>
+        <% if is_correct %>
+          <span class="ml-2 text-green-600 font-bold">&check;</span>
+        <% elsif was_chosen %>
+          <span class="ml-2 text-red-600 font-bold">&cross;</span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "shared/question_references", question: @question %>
+
+  <% if @next_question %>
+    <%= link_to "Next Question", quiz_preview_question_path(secret_preview_token: @quiz.secret_preview_token, position: @next_question.position), class: "inline-flex items-center justify-center rounded-xl bg-red-600 px-8 py-4 text-xl font-semibold text-white shadow-sm hover:bg-red-500 transition" %>
+  <% else %>
+    <%= link_to "Finish Preview", quiz_preview_end_path(secret_preview_token: @quiz.secret_preview_token), class: "inline-flex items-center justify-center rounded-xl bg-red-600 px-8 py-4 text-xl font-semibold text-white shadow-sm hover:bg-red-500 transition" %>
+  <% end %>
+</div>

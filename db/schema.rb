@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_115500) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_150000) do
   create_table "answers", force: :cascade do |t|
     t.string "body", null: false
     t.boolean "correct", default: false, null: false
@@ -57,9 +57,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_115500) do
   create_table "quizzes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "creator_id"
+    t.string "secret_preview_token", null: false
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_quizzes_on_creator_id"
+    t.index ["secret_preview_token"], name: "index_quizzes_on_secret_preview_token", unique: true
   end
 
   create_table "references", force: :cascade do |t|

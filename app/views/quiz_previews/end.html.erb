@@ -1,0 +1,8 @@
+<div class="w-full max-w-2xl mx-auto text-center">
+  <h1 class="text-3xl font-bold text-gray-900 mb-4"><%= @quiz.title %></h1>
+  <div class="rounded-xl bg-gray-50 border border-gray-200 p-8 mb-6">
+    <p class="text-2xl font-bold text-gray-900 mb-2">Preview complete!</p>
+    <p class="text-gray-500">Thanks for previewing this quiz.</p>
+  </div>
+  <%= link_to "Start Again", quiz_preview_path(secret_preview_token: @quiz.secret_preview_token), class: "inline-flex items-center justify-center rounded-xl border-2 border-gray-200 bg-white px-6 py-3 text-base font-semibold text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
+</div>

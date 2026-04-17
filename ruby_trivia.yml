@@ -1,0 +1,438 @@
+---
+- question: |
+    What does the following expression return?
+
+    ```ruby
+    [].all? { |x| x > 0 }
+    ```
+  answers:
+    - "true"
+    - "false"
+    - "nil"
+    - An exception is raised
+  correct: 0
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/Enumerable.html
+
+- question: |
+    What happens when this code runs?
+
+    ```ruby
+    this_is_proc = proc { |x| x }
+    this_is_proc.call
+    ```
+  answers:
+    - It returns `nil`
+    - It returns `0`
+    - An `ArgumentError` is raised
+    - A `LocalJumpError` is raised
+  correct: 0
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/Proc.html
+
+- question: |
+    What will be the value of this expression:
+
+    ```ruby
+    case 3
+    when 1...3
+     :low
+    when 2..3
+     :mid
+    else
+     :high
+    end
+    ```
+  answers:
+    - ":low"
+    - ":mid"
+    - ":high"
+    - "nil"
+  correct: 1
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/syntax/control_expressions_rdoc.html
+    - https://docs.ruby-lang.org/en/master/Range.html
+
+- question: |
+    What will be the value of this expression:
+
+    ```ruby
+    case 2.5
+    when 1...3
+     :low
+    when 2..3
+     :mid
+    else
+     :high
+    end
+    ```
+  answers:
+    - ":low"
+    - ":mid"
+    - ":high"
+    - "nil"
+  correct: 0
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/syntax/control_expressions_rdoc.html
+    - https://docs.ruby-lang.org/en/master/Range.html
+
+- question: |
+    What will be the result of the following piece of code?
+
+    ```ruby
+    foo = "failure"
+    "This is #@foo"
+    ```
+  answers:
+    - String "This is #@foo"
+    - String "This is failure"
+    - An exception
+  correct: 1
+  time_limit_seconds: 15
+  references:
+    - https://ruby-doc.org/core-3.0.0/doc/syntax/literals_rdoc.html#label-Strings
+
+- question: |
+    What does this method return?
+
+    ```ruby
+    def bar
+      return :from_body
+    ensure
+      return :from_ensure
+    end
+    ```
+  answers:
+    - ":from_body"
+    - ":from_ensure"
+    - "nil"
+    - An exception is raised
+  correct: 1
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/language/exceptions_md.html
+
+- question: |
+    What is the value of `a` after running this code?
+
+    ```ruby
+    a = Array.new(3, [])
+    a[0] << "oops"
+    ```
+  answers:
+    - '[["oops"]]'
+    - '[["oops"], [], []]'
+    - '[["oops"], ["oops"], ["oops"]]'
+    - A FrozenError is raised
+  correct: 2
+  time_limit_seconds: 20
+  references:
+    - https://docs.ruby-lang.org/en/master/Array.html#method-c-new
+
+- question: |
+    What does the following code print?
+
+    ```ruby
+    (1..10).each do |i|
+      puts i if (i == 3)..(i == 6)
+    end
+    ```
+  answers:
+    - Only 3 and 6
+    - 3, 4, 5, and 6
+    - A SyntaxError is raised
+  correct: 1
+  time_limit_seconds: 20
+  references:
+    - https://docs.ruby-lang.org/en/master/syntax/control_expressions_rdoc.html#label-Flip-Flop
+
+- question: |
+    What does `"zz".succ` return?
+  answers:
+    - "aa"
+    - "aaa"
+    - "{{"
+    - A NoMethodError is raised
+  correct: 1
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/String.html#method-i-succ
+
+- question: |
+    What does the following method return?
+
+    ```ruby
+    def test
+      p = Proc.new { return 1 }
+      p.call
+      2
+    end
+    ```
+  answers:
+    - "2"
+    - "1"
+    - A LocalJumpError is raised
+  correct: 1
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/Proc.html
+
+- question: |
+    In a Ruby script containing the following code,
+    what happens when it is executed?
+
+    ```ruby
+    puts DATA.read
+    __END__
+    Hello from the other side!
+    ```
+  answers:
+    - A SyntaxError
+    - A NameError is raised
+    - It prints "Hello from the other side!"
+    - Nothing is printed
+  correct: 2
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/Object.html
+
+- question: |
+    A tiny carnival booth runs this code to decide your prize.
+    Which value ends up in `prize`?
+
+    ```ruby
+    prize = case "7"
+            when Integer
+              :integer
+            when /7/
+              :lucky
+            when "7"
+              :string
+            else
+              :mystery
+            end
+    ```
+  answers:
+    - ':integer'
+    - ':lucky'
+    - ':string'
+    - ':mystery'
+  correct: 1
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/syntax/control_expressions_rdoc.html#label-case+Expression
+
+- question: |
+    What value does `score` end up with?
+
+    ```ruby
+    score = catch(:done) do
+      [1, 2, 3, 4].each do |n|
+        throw :done, n * 10 if n.even?
+      end
+      99
+    end
+    ```
+  answers:
+    - '20'
+    - '40'
+    - '99'
+    - A LocalJumpError is raised
+  correct: 0
+  time_limit_seconds: 20
+  references:
+    - https://docs.ruby-lang.org/en/master/Kernel.html#method-i-catch
+
+- question: |
+    What will this code print?
+
+    ```ruby
+    VALUE = "Global value"
+
+    module A
+      VALUE = "A value"
+    end
+
+    module A::B
+      VALUE = "B value"
+    end
+
+    module A
+      puts VALUE
+    end
+    ```
+  answers:
+    - A value
+    - B value
+    - Global value
+    - A NameError is raised
+  correct: 0
+  time_limit_seconds: 30
+  references:
+    - https://docs.ruby-lang.org/en/master/syntax/modules_and_classes_rdoc.html
+    - https://docs.ruby-lang.org/en/master/Module.html
+
+- question: |
+    What will this code print?
+
+    ```ruby
+    VALUE = "Global value"
+
+    module A
+      VALUE = "A value"
+    end
+
+    module A
+      module B
+        VALUE = "B value"
+      end
+    end
+
+    module A::B::C
+      puts VALUE
+    end
+    ```
+  answers:
+    - A value
+    - B value
+    - Global value
+    - A NameError is raised
+  correct: 2
+  time_limit_seconds: 30
+  references:
+    - https://docs.ruby-lang.org/en/master/syntax/modules_and_classes_rdoc.html
+    - https://docs.ruby-lang.org/en/master/Module.html
+
+- question: |
+    What does the final line evaluate to?
+
+    ```ruby
+    for snack in %w[cake pie]
+    end
+
+    snack.upcase
+    ```
+  answers:
+    - A NameError is raised
+    - A NoMethodError is raised
+    - 'CAKE'
+    - 'PIE'
+    - nil
+  correct: 3
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/syntax/control_expressions_rdoc.html#label-for+Loop
+
+- question: |
+    What does the last expression evaluate to?
+
+    ```ruby
+    count = 0
+
+    begin
+      count += 1
+    end while false
+
+    count
+    ```
+  answers:
+    - '0'
+    - '1'
+    - It loops forever
+    - A SyntaxError is raised
+  correct: 1
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/syntax/control_expressions_rdoc.html#label-while+Loop
+
+- question: |
+    What is the final value of `pantry`?
+
+    ```ruby
+    pantry = Hash.new { |h, k| h[k] = k.upcase }
+    pantry["jam"]
+    pantry["tea"]
+    pantry
+    ```
+  answers:
+    - '{}'
+    - '{"jam"=>"JAM"}'
+    - '{"jam"=>"JAM", "tea"=>"TEA"}'
+    - A NoMethodError is raised
+  correct: 2
+  time_limit_seconds: 15
+  references:
+    - https://docs.ruby-lang.org/en/master/Hash.html#method-c-new
+
+- question: |
+    A number wizard combines three kinds of division.
+    What is the result?
+
+    ```ruby
+    result = [1 / 2, 1 / 2r, 1.fdiv(2)]
+    ```
+  answers:
+    - '[0, 0, 0]'
+    - '[0, (1/2), 0.5]'
+    - '[(1/2), (1/2), (1/2)]'
+    - A TypeError is raised
+  correct: 1
+  time_limit_seconds: 20
+  references:
+    - https://docs.ruby-lang.org/en/master/syntax/literals_rdoc.html#label-Rational+Literals
+
+- question: |
+    For a good time, all you need to pack are socks and a hat.
+    What does the method call return?
+
+    ```ruby
+    def pack(*socks, hat)
+      [socks, hat]
+    end
+
+    pack("red", "blue", "fedora")
+    ```
+  answers:
+    - '["red", "blue", "fedora"]'
+    - '["red", ["blue", "fedora"]]'
+    - '[["red", "blue"], "fedora"]'
+    - An ArgumentError is raised
+  correct: 2
+  time_limit_seconds: 20
+  references:
+    - https://docs.ruby-lang.org/en/master/syntax/methods_rdoc.html
+
+- question: |
+    The quiz host wants you to regret coming to this quiz.
+    What is the result of the last expression?
+
+    ```ruby
+    class Root
+      def greet = "!"
+    end
+
+    module Append
+      def greet = "World #{super}"
+    end
+
+    class Tricky < Root
+      def greet = "Hello #{super}"
+    end
+
+    Tricky.prepend(Append)
+    Tricky.new.greet
+    ```
+  answers:
+    - "Hello !"
+    - "World !"
+    - "Hello World !"
+    - "World Hello !"
+    - A NoMethodError is raised
+  correct: 3
+  time_limit_seconds: 40
+  references:
+    - https://docs.ruby-lang.org/en/master/Module.html#method-i-prepend
