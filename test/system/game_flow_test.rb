@@ -98,4 +98,29 @@ class GameFlowTest < ApplicationSystemTestCase
       assert_text "PLAYERS\n1"
     end
   end
+
+  test "host active view updates when an authenticated player joins from another browser session" do
+    game = Game.create!(quiz: quizzes(:ruby_trivia))
+    first_question = game.quiz.questions.order(:position).first
+
+    Capybara.using_session(:host) do
+      sign_in_as(users(:alice))
+      visit game_path(game)
+      click_button "Start Quiz"
+
+      assert_text "PLAYERS\n0"
+      connect_turbo_cable_stream_sources
+    end
+
+    Capybara.using_session(:player) do
+      sign_in_as(users(:bob))
+      visit play_path(code: game.code)
+
+      assert_text first_question.body
+    end
+
+    Capybara.using_session(:host) do
+      assert_text "PLAYERS\n1"
+    end
+  end
 end

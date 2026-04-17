@@ -5,7 +5,11 @@ class PlayController < ApplicationController
   def show
     @user = current_player_user
     if @user
-      @participant = @game.participants.find_or_create_by!(user: @user)
+      @participant = @game.participants.find_or_initialize_by(user: @user)
+      if @participant.new_record?
+        @participant.save!
+        @game.reload.broadcast_game_state
+      end
     end
   end
 
