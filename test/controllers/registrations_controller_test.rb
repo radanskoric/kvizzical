@@ -98,4 +98,11 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "guest@example.com", anonymous_user.email_address
     assert_equal "fresh@example.com", User.order(:id).last.email_address
   end
+
+  test "new does not prefill name when there is no anonymous user session" do
+    get new_registration_path
+
+    assert_response :success
+    assert_select "input[name='user[name]'][value]", false
+  end
 end

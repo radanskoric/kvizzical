@@ -110,4 +110,37 @@ class ResponsesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to play_path(code: @game.code)
   end
+
+  test "rejects response when participant does not exist" do
+    game = Game.create!(quiz: quizzes(:ruby_trivia))
+    game.start!
+
+    assert_no_difference "Response.count" do
+      post responses_path, params: {
+        game_code: game.code,
+        question_id: game.current_question.id,
+        answer_id: answers(:mvc_correct).id
+      }
+    end
+
+    assert_redirected_to play_path(code: game.code)
+  end
+
+  test "rejects response when save fails due to validation" do
+    post responses_path, params: {
+      game_code: @game.code,
+      question_id: @question.id,
+      answer_id: @correct_answer.id
+    }
+
+    assert_no_difference "Response.count" do
+      post responses_path, params: {
+        game_code: @game.code,
+        question_id: @question.id,
+        answer_id: @correct_answer.id
+      }
+    end
+
+    assert_redirected_to play_path(code: @game.code)
+  end
 end

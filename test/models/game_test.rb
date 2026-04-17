@@ -154,4 +154,41 @@ class GameTest < ActiveSupport::TestCase
       remove_method :original_alphanumeric_for_test
     end
   end
+
+  test "start! does nothing when game is not waiting" do
+    game = games(:active_game)
+    current_question = game.current_question
+
+    game.start!
+
+    game.reload
+    assert game.active?
+    assert_equal current_question, game.current_question
+  end
+
+  test "finish_question! does nothing when game is not active" do
+    game = games(:waiting_game)
+
+    game.finish_question!
+
+    game.reload
+    assert game.waiting?
+    assert_nil game.current_question
+  end
+
+  test "advance! does nothing when game is not reviewing" do
+    game = games(:waiting_game)
+
+    game.advance!
+
+    game.reload
+    assert game.waiting?
+    assert_nil game.current_question
+  end
+
+  test "all_answered? returns false when game is not active" do
+    game = games(:waiting_game)
+
+    assert_not game.all_answered?
+  end
 end

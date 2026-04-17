@@ -124,4 +124,46 @@ class ResponseTest < ActiveSupport::TestCase
     assert response.score >= 100
     assert response.score <= 150
   end
+
+  test "scores zero when answer is nil" do
+    game = games(:active_game)
+    response = Response.new(
+      participant: participants(:alice_in_game),
+      question: questions(:mvc_question),
+      answer: nil,
+      responded_at: game.question_opened_at
+    )
+
+    response.send(:calculate_score)
+
+    assert_equal 0, response.score
+  end
+
+  test "scores zero when participant is nil" do
+    game = games(:active_game)
+    response = Response.new(
+      participant: nil,
+      question: questions(:mvc_question),
+      answer: answers(:mvc_correct),
+      responded_at: game.question_opened_at
+    )
+
+    response.send(:calculate_score)
+
+    assert_equal 0, response.score
+  end
+
+  test "scores zero when question is nil" do
+    game = games(:active_game)
+    response = Response.new(
+      participant: participants(:alice_in_game),
+      question: nil,
+      answer: answers(:mvc_correct),
+      responded_at: game.question_opened_at
+    )
+
+    response.send(:calculate_score)
+
+    assert_equal 0, response.score
+  end
 end

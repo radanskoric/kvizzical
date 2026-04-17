@@ -88,6 +88,7 @@ db/
 - Test the public interface, not implementation details
 - One assertion per behavior; avoid redundancy
 - Test files mirror `app/` structure under `test/`
+- Use cov-loupe CLI to inspect coverage reports. Run `bundle exec cov-loupe --help` to see available options.
 - All changes must preserve or restore `100%` line coverage and
 `100%` branch coverage by the end of the task.
 - After every change, once `bin/rails test` is green, also run `bin/rails test:system` and ensure it is green.

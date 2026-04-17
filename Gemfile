@@ -57,6 +57,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Tools for inspecting Simplecov reports from CLI
+  gem "cov-loupe", "~> 5.0"
 end
 
 group :development do
