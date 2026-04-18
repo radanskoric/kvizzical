@@ -2,15 +2,6 @@
   <h1 class="text-5xl font-extrabold tracking-tight text-gray-900 mb-2">Kvizzical</h1>
   <p class="text-lg text-gray-500 mb-10">Join a live quiz</p>
 
-  <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-    <% if authenticated? %>
-      <%= button_to "Sign out", session_path, method: :delete, class: "w-full sm:w-auto rounded-xl border-2 border-gray-200 bg-white px-6 py-3 text-base font-semibold text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
-    <% else %>
-      <%= link_to "Log in", new_session_path, class: "w-full sm:w-auto rounded-xl border-2 border-gray-200 bg-white px-6 py-3 text-base font-semibold text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
-      <%= link_to "Register", new_registration_path, class: "w-full sm:w-auto rounded-xl bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-red-500 transition" %>
-    <% end %>
-  </div>
-
   <%= form_tag(nil, method: :get, id: "join-form", class: "space-y-4") do %>
     <input
       type="text"

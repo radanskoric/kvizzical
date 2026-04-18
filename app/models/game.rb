@@ -43,6 +43,19 @@ class Game < ApplicationRecord
       current_question.responses.where(participant: participants).count >= participants.count
   end
 
+  def previous_leaderboard_positions
+    return {} unless reviewing? && current_question
+
+    participants.includes(:responses)
+      .map do |participant|
+        previous_score = participant.responses.reject { |response| response.question_id == current_question.id }.sum(&:score)
+        [ participant.id, previous_score ]
+      end
+      .sort_by { |_, score| -score }
+      .each_with_index
+      .to_h { |(participant_id, _score), index| [ participant_id, index ] }
+  end
+
   def broadcast_game_state
     broadcast_replace(
       target: "game_host_area",

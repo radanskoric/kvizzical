@@ -1,8 +1,10 @@
 <div data-leaderboard class="rounded-2xl bg-white border border-gray-200 shadow-sm p-6 text-left">
   <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4 text-center">Leaderboard</h3>
+  <% reviewed_question = game.reviewing? ? game.current_question : nil %>
   <% ranked = game.participants.includes(:user, :responses)
        .map { |p| [p, p.responses.sum(&:score)] }
        .sort_by { |_, score| -score } %>
+  <% previous_positions = game.previous_leaderboard_positions %>
   <% if ranked.any? %>
     <ol class="space-y-2">
       <% ranked.each_with_index do |(participant, score), index| %>
@@ -11,7 +13,13 @@
             <span class="text-lg font-bold text-gray-400 w-6 text-center"><%= index + 1 %></span>
             <span class="font-semibold text-gray-900"><%= participant.name %></span>
           </div>
-          <span class="font-bold text-lg <%= index == 0 ? 'text-yellow-600' : 'text-gray-700' %>"><%= score %></span>
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-lg <%= index == 0 ? 'text-yellow-600' : 'text-gray-700' %>"><%= score %></span>
+            <% if reviewed_question %>
+              <%= render_response_score(participant.responses.find { |response| response.question_id == reviewed_question.id }) %>
+              <%= render_leaderboard_movement(previous_positions.fetch(participant.id, index) - index) %>
+            <% end %>
+          </div>
         </li>
       <% end %>
     </ol>

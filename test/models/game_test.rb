@@ -102,6 +102,74 @@ class GameTest < ActiveSupport::TestCase
     assert_not game.all_answered?
   end
 
+  test "previous_leaderboard_positions returns empty hash when game is not reviewing" do
+    game = games(:active_game)
+
+    assert_equal({}, game.previous_leaderboard_positions)
+  end
+
+  test "previous_leaderboard_positions ranks players by score before the reviewed question" do
+    game = games(:active_game)
+    reviewed_question = game.current_question
+    previous_question = questions(:gem_question)
+    alice = participants(:alice_in_game)
+    bob = participants(:bob_in_game)
+    charlie = Participant.create!(game: game, user: User.create!(name: "Charlie", session_token: SecureRandom.hex(16)))
+
+    Response.create!(
+      participant: alice,
+      question: previous_question,
+      answer: answers(:gem_correct),
+      responded_at: game.question_opened_at + 14.seconds
+    )
+
+    Response.create!(
+      participant: bob,
+      question: previous_question,
+      answer: answers(:gem_wrong_1),
+      responded_at: game.question_opened_at + 14.seconds
+    )
+
+    Response.create!(
+      participant: charlie,
+      question: previous_question,
+      answer: answers(:gem_correct),
+      responded_at: game.question_opened_at + 14.5.seconds
+    )
+
+    Response.create!(
+      participant: alice,
+      question: reviewed_question,
+      answer: answers(:mvc_wrong_1),
+      responded_at: game.question_opened_at + 8.seconds
+    )
+
+    Response.create!(
+      participant: bob,
+      question: reviewed_question,
+      answer: answers(:mvc_correct),
+      responded_at: game.question_opened_at + 1.second
+    )
+
+    Response.create!(
+      participant: charlie,
+      question: reviewed_question,
+      answer: answers(:mvc_wrong_1),
+      responded_at: game.question_opened_at + 8.seconds
+    )
+
+    game.update!(status: :reviewing, question_opened_at: nil)
+
+    assert_equal(
+      {
+        alice.id => 0,
+        charlie.id => 1,
+        bob.id => 2
+      },
+      game.previous_leaderboard_positions
+    )
+  end
+
   test "broadcast_game_state broadcasts to a signed in participant stream" do
     game = games(:active_game)
     participant = participants(:alice_in_game)
