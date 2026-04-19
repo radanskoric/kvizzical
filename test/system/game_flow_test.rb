@@ -84,6 +84,7 @@ class GameFlowTest < ApplicationSystemTestCase
 
       assert_text "PLAYERS\n0"
       connect_turbo_cable_stream_sources
+      connect_turbo_cable_stream_sources
     end
 
     Capybara.using_session(:player) do
@@ -95,6 +96,7 @@ class GameFlowTest < ApplicationSystemTestCase
     end
 
     Capybara.using_session(:host) do
+      connect_turbo_cable_stream_sources
       assert_text "PLAYERS\n1"
     end
   end
@@ -110,6 +112,7 @@ class GameFlowTest < ApplicationSystemTestCase
 
       assert_text "PLAYERS\n0"
       connect_turbo_cable_stream_sources
+      connect_turbo_cable_stream_sources
     end
 
     Capybara.using_session(:player) do
@@ -120,6 +123,7 @@ class GameFlowTest < ApplicationSystemTestCase
     end
 
     Capybara.using_session(:host) do
+      connect_turbo_cable_stream_sources
       assert_text "PLAYERS\n1"
     end
   end

@@ -69,6 +69,12 @@ db/
 
 - Follow `rubocop-rails-omakase` style guide
 - Use Tailwind CSS classes exclusively for styling
+- Prefer semantic component classes in `app/assets/tailwind/application.css` under `@layer components` for repeated UI patterns
+- Compose Tailwind component classes from existing Tailwind utilities instead of raw CSS properties
+- Extract only invariant multi-utility base styles; leave per-instance sizing, spacing, layout, and intent/state classes additive in templates
+- Do not introduce semantic classes that merely alias a single Tailwind utility
+- Do not create component classes whose consumers must override extracted defaults
+- When adding new UI, reuse existing component classes before introducing new utility clusters
 - Do not add/remove comments unless asked
 - Keep changes minimal and focused
 - Always run `bin/rubocop -A` to auto-correct style issues. Fix any remaining issues yourself.

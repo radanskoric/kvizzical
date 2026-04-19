@@ -1,5 +1,5 @@
-<div class="w-full max-w-md mx-auto text-center">
-  <h1 class="text-5xl font-extrabold tracking-tight text-gray-900 mb-2">Kvizzical</h1>
+<div class="page-shell max-w-md">
+  <h1 class="page-title text-5xl font-extrabold tracking-tight mb-2">Kvizzical</h1>
   <p class="text-lg text-gray-500 mb-10">Join a live quiz</p>
 
   <%= form_tag(nil, method: :get, id: "join-form", class: "space-y-4") do %>
@@ -10,9 +10,9 @@
       required
       maxlength="6"
       autofocus
-      class="w-full text-center text-2xl font-mono uppercase tracking-widest rounded-xl border-2 border-gray-300 px-4 py-3 focus:border-red-500 focus:ring-red-500 focus:outline-none"
+      class="text-input text-center text-2xl font-mono uppercase tracking-widest"
     />
-    <button type="submit" class="w-full rounded-xl bg-red-600 px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 transition">
+    <button type="submit" class="btn btn-primary w-full px-6 py-3 text-lg shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
       Join Game
     </button>
   <% end %>
@@ -29,19 +29,19 @@
             </div>
 
             <div class="mt-4 flex flex-col gap-3 sm:flex-row">
-              <%= link_to "Start", games_path(quiz_id: quiz.id), data: { turbo_method: :post }, class: "w-full sm:w-auto rounded-xl bg-red-600 px-5 py-3 text-center font-semibold text-white shadow-sm hover:bg-red-500 transition" %>
-              <%= link_to "Preview", quiz_preview_path(secret_preview_token: quiz.secret_preview_token), class: "w-full sm:w-auto rounded-xl border-2 border-gray-200 bg-white px-5 py-3 text-center font-semibold text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
+              <%= link_to "Start", games_path(quiz_id: quiz.id), data: { turbo_method: :post }, class: "btn btn-primary w-full px-5 py-3 text-center shadow-sm sm:w-auto" %>
+              <%= link_to "Preview", quiz_preview_path(secret_preview_token: quiz.secret_preview_token), class: "btn btn-secondary w-full px-5 py-3 text-center sm:w-auto" %>
             </div>
           </div>
         <% end %>
       </div>
     <% else %>
-      <div class="rounded-xl border border-gray-200 bg-white px-6 py-6 text-left shadow-sm">
+      <div class="panel-subtle px-6 py-6 text-left shadow-sm bg-white">
         <p class="text-sm font-medium uppercase tracking-wide text-gray-400">Registered hosts only</p>
         <p class="mt-2 text-gray-600">Create an account or log in to start a quiz for your players.</p>
         <div class="mt-4 flex flex-col gap-3 sm:flex-row">
-          <%= link_to "Log in to host", new_session_path, class: "w-full sm:w-auto rounded-xl border-2 border-gray-200 bg-white px-5 py-3 text-center font-semibold text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
-          <%= link_to "Register to host", new_registration_path, class: "w-full sm:w-auto rounded-xl bg-red-600 px-5 py-3 text-center font-semibold text-white hover:bg-red-500 transition" %>
+          <%= link_to "Log in to host", new_session_path, class: "btn btn-secondary w-full px-5 py-3 text-center sm:w-auto" %>
+          <%= link_to "Register to host", new_registration_path, class: "btn btn-primary w-full px-5 py-3 text-center sm:w-auto" %>
         </div>
       </div>
     <% end %>

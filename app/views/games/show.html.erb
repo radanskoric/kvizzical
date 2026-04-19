@@ -1,6 +1,6 @@
 <%= turbo_stream_from @game %>
 
-<div class="w-full max-w-2xl mx-auto text-center">
-  <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 mb-4"><%= @game.quiz.title %></h1>
+<div class="page-shell max-w-2xl">
+  <h1 class="page-title text-4xl font-extrabold tracking-tight mb-4"><%= @game.quiz.title %></h1>
   <%= render "games/host_area", game: @game %>
 </div>

@@ -55,8 +55,8 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
 
     get game_path(game)
 
-    assert_select "[data-response-score].bg-green-100.text-green-700", text: "+940"
-    assert_select "[data-response-score].bg-red-100.text-red-700", text: "+0"
+    assert_select "[data-response-score].score-badge.score-badge-high", text: "+940"
+    assert_select "[data-response-score].score-badge.score-badge-low", text: "+0"
   end
 
   test "host review leaderboard shows place movement after reviewed-question scores" do
@@ -113,8 +113,8 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
 
     get game_path(game)
 
-    assert_select "[data-leaderboard-movement].text-green-700", text: "▲2"
-    assert_select "[data-leaderboard-movement].text-red-700", text: "▼-1", count: 2
+    assert_select "[data-leaderboard-movement].leaderboard-movement.leaderboard-movement-up", text: "▲2"
+    assert_select "[data-leaderboard-movement].leaderboard-movement.leaderboard-movement-down", text: "▼-1", count: 2
   end
 
   test "leaderboard shows anonymous when participant has no user" do
@@ -184,8 +184,8 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
 
     get play_path(code: game.code)
 
-    assert_select "[data-response-score].bg-green-100.text-green-700", text: "+940"
-    assert_select "[data-response-score].bg-orange-100.text-orange-700", text: "+460"
+    assert_select "[data-response-score].score-badge.score-badge-high", text: "+940"
+    assert_select "[data-response-score].score-badge.score-badge-medium", text: "+460"
   end
 
   test "host review leaderboard shows unchanged place indicator when ranking stays the same" do
@@ -225,6 +225,6 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
 
     get game_path(game)
 
-    assert_select "[data-leaderboard-movement].text-black", text: "-", count: 2
+    assert_select "[data-leaderboard-movement].leaderboard-movement.text-black", text: "-", count: 2
   end
 end

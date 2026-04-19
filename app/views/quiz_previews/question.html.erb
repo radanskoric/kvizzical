@@ -1,7 +1,7 @@
-<div id="preview_question_area" data-preview-status="active" class="w-full max-w-md mx-auto text-center">
+<div id="preview_question_area" data-preview-status="active" class="page-shell max-w-md">
   <div class="flex items-center justify-between mb-2">
-    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide"><%= @quiz.title %></p>
-    <p class="text-3xl font-bold text-red-600"
+    <p class="section-eyebrow"><%= @quiz.title %></p>
+    <p class="countdown-display text-3xl"
        data-controller="countdown"
        data-countdown-seconds-value="<%= @question.time_limit_seconds %>"
        data-countdown-opened-at-value="<%= Time.current.iso8601(3) %>"
@@ -9,11 +9,11 @@
     </p>
   </div>
 
-  <h2 class="text-2xl font-bold text-gray-900 mb-6" data-question-body><%= render_question(@question) %></h2>
+  <h2 class="page-title text-2xl mb-6" data-question-body><%= render_question(@question) %></h2>
 
   <div id="answer_area" class="space-y-3">
     <% @answers.each_with_index do |answer, index| %>
-      <%= link_to quiz_preview_answer_path(secret_preview_token: @quiz.secret_preview_token, position: @question.position, answer_position: index + 1, answered_index: index + 1), class: "block w-full rounded-xl border-2 border-gray-200 bg-white px-6 py-4 text-lg font-medium text-gray-800 hover:border-red-500 hover:bg-red-50 transition" do %>
+      <%= link_to quiz_preview_answer_path(secret_preview_token: @quiz.secret_preview_token, position: @question.position, answer_position: index + 1, answered_index: index + 1), class: "answer-option answer-option-idle block" do %>
         <%= answer.body %>
       <% end %>
     <% end %>

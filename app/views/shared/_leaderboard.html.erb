@@ -1,5 +1,5 @@
-<div data-leaderboard class="rounded-2xl bg-white border border-gray-200 shadow-sm p-6 text-left">
-  <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4 text-center">Leaderboard</h3>
+<div data-leaderboard class="panel p-6 text-left">
+  <h3 class="section-eyebrow mb-4 text-center">Leaderboard</h3>
   <% reviewed_question = game.reviewing? ? game.current_question : nil %>
   <% ranked = game.participants.includes(:user, :responses)
        .map { |p| [p, p.responses.sum(&:score)] }

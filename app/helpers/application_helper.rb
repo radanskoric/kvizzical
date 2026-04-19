@@ -17,7 +17,7 @@ module ApplicationHelper
       :span,
       format_response_score(score),
       data: { response_score: true },
-      class: "rounded-full px-3 py-1 text-sm font-semibold #{response_score_badge_classes(score)}"
+      class: "score-badge #{response_score_badge_classes(score)}"
     )
   end
 
@@ -26,7 +26,7 @@ module ApplicationHelper
       :span,
       format_leaderboard_movement(places_moved),
       data: { leaderboard_movement: true },
-      class: "text-sm font-semibold #{leaderboard_movement_classes(places_moved)}"
+      class: "leaderboard-movement #{leaderboard_movement_classes(places_moved)}"
     )
   end
 
@@ -34,11 +34,11 @@ module ApplicationHelper
 
   def response_score_badge_classes(score)
     if score > 500
-      "bg-green-100 text-green-700"
+      "score-badge-high"
     elsif score.positive?
-      "bg-orange-100 text-orange-700"
+      "score-badge-medium"
     else
-      "bg-red-100 text-red-700"
+      "score-badge-low"
     end
   end
 
@@ -48,9 +48,9 @@ module ApplicationHelper
 
   def leaderboard_movement_classes(places_moved)
     if places_moved.positive?
-      "text-green-700"
+      "leaderboard-movement-up"
     elsif places_moved.negative?
-      "text-red-700"
+      "leaderboard-movement-down"
     else
       "text-black"
     end

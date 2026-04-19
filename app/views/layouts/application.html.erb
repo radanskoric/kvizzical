@@ -26,16 +26,16 @@
   <body class="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50">
     <header class="py-4 px-6">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
-        <a href="<%= root_path %>" class="text-2xl font-extrabold tracking-tight text-red-600 hover:text-red-500 transition">
+        <a href="<%= root_path %>" class="brand-link">
           Kvizzical
         </a>
         <div class="flex items-center gap-3 text-sm font-medium">
           <% if authenticated? %>
             <span class="hidden text-gray-500 sm:inline"><%= current_user.name %></span>
-            <%= button_to "Sign out", session_path, method: :delete, class: "rounded-xl border border-gray-200 bg-white px-4 py-2 text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
+            <%= button_to "Sign out", session_path, method: :delete, class: "btn btn-toolbar-secondary px-4 py-2" %>
           <% else %>
-            <%= link_to "Log in", new_session_path, class: "rounded-xl border border-gray-200 bg-white px-4 py-2 text-gray-700 hover:border-red-500 hover:bg-red-50 transition" %>
-            <%= link_to "Register", new_registration_path, class: "rounded-xl bg-red-600 px-4 py-2 text-white hover:bg-red-500 transition" %>
+            <%= link_to "Log in", new_session_path, class: "btn btn-toolbar-secondary px-4 py-2" %>
+            <%= link_to "Register", new_registration_path, class: "btn btn-primary px-4 py-2" %>
           <% end %>
         </div>
       </div>
@@ -43,12 +43,12 @@
 
     <main class="max-w-4xl mx-auto mt-8 px-5 flex flex-col items-center">
       <% if notice %>
-        <div class="w-full max-w-md mb-4 rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-green-800 text-sm font-medium text-center">
+        <div class="flash-message flash-message-success mb-4">
           <%= notice %>
         </div>
       <% end %>
       <% if alert %>
-        <div class="w-full max-w-md mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-800 text-sm font-medium text-center">
+        <div class="flash-message flash-message-danger mb-4">
           <%= alert %>
         </div>
       <% end %>
