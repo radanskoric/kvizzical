@@ -95,7 +95,9 @@ class ResponseTest < ActiveSupport::TestCase
       responded_at: halfway
     )
 
-    assert_in_delta 550, response.score, 50
+    expected_score = (((question.time_limit_seconds / 2.0) / question.time_limit_seconds) * 600 + 400).round
+
+    assert_equal expected_score, response.score
   end
 
   test "scores zero for wrong answer" do
@@ -121,8 +123,9 @@ class ResponseTest < ActiveSupport::TestCase
       responded_at: just_before_deadline
     )
 
-    assert response.score >= 100
-    assert response.score <= 150
+    expected_score = ((0.1 / question.time_limit_seconds) * 600 + 400).round
+
+    assert_equal expected_score, response.score
   end
 
   test "scores zero when answer is nil" do

@@ -55,7 +55,7 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
 
     get game_path(game)
 
-    assert_select "[data-response-score].score-badge.score-badge-high", text: "+940"
+    assert_select "[data-response-score].score-badge.score-badge-high", text: "+960"
     assert_select "[data-response-score].score-badge.score-badge-low", text: "+0"
   end
 
@@ -184,8 +184,8 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
 
     get play_path(code: game.code)
 
-    assert_select "[data-response-score].score-badge.score-badge-high", text: "+940"
-    assert_select "[data-response-score].score-badge.score-badge-medium", text: "+460"
+    assert_select "[data-response-score].score-badge.score-badge-high", text: "+960"
+    assert_select "[data-response-score].score-badge.score-badge-high", text: "+640"
   end
 
   test "host review leaderboard shows unchanged place indicator when ranking stays the same" do

@@ -20,6 +20,6 @@ class Response < ApplicationRecord
     elapsed = (responded_at - game.question_opened_at).to_f
     time_remaining = [ time_limit - elapsed, 0 ].max
 
-    self.score = ((time_remaining / time_limit) * 900 + 100).round
+    self.score = ((time_remaining / time_limit) * 600 + 400).round
   end
 end
