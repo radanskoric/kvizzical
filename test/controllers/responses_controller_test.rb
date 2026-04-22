@@ -9,6 +9,7 @@ class ResponsesControllerTest < ActionDispatch::IntegrationTest
 
     post play_path(code: @game.code), params: { name: "Responder" }
     follow_redirect!
+    @game.reload
   end
 
   test "creates a response for the current question" do
@@ -26,6 +27,7 @@ class ResponsesControllerTest < ActionDispatch::IntegrationTest
   test "finishes the question when all players have answered" do
     game = Game.create!(quiz: quizzes(:ruby_trivia))
     post play_path(code: game.code), params: { name: "Solo Responder" }
+    game.reload
     game.start!
 
     post responses_path, params: {

@@ -134,7 +134,7 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     game = games(:active_game)
     game.update!(status: :reviewing, question_opened_at: nil)
     calls = []
-    game.define_singleton_method(:broadcast_replace_to) do |*args, **kwargs|
+    game.define_singleton_method(:broadcast_action_to) do |*args, **kwargs|
       calls << [ args, kwargs ]
     end
 
@@ -160,7 +160,7 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
   test "finish_question broadcasts game state update" do
     game = games(:active_game)
     calls = []
-    game.define_singleton_method(:broadcast_replace_to) do |*args, **kwargs|
+    game.define_singleton_method(:broadcast_action_to) do |*args, **kwargs|
       calls << [ args, kwargs ]
     end
 

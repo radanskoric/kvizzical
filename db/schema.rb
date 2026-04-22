@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_20_193200) do
   create_table "answers", force: :cascade do |t|
     t.string "body", null: false
     t.boolean "correct", default: false, null: false
@@ -25,6 +25,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_150000) do
     t.string "code", null: false
     t.datetime "created_at", null: false
     t.integer "current_question_id"
+    t.integer "lock_version", default: 0, null: false
     t.datetime "question_opened_at"
     t.integer "quiz_id", null: false
     t.integer "status", default: 0, null: false

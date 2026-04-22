@@ -95,9 +95,11 @@ class GameFlowTest < ApplicationSystemTestCase
       assert_text quizzes(:ruby_trivia).title
     end
 
+    assert_equal 1, game.reload.participants.count
+
     Capybara.using_session(:host) do
       connect_turbo_cable_stream_sources
-      assert_text "PLAYERS\n1"
+      assert_selector "[data-player-count]", text: "1"
     end
   end
 
@@ -122,9 +124,62 @@ class GameFlowTest < ApplicationSystemTestCase
       assert_text first_question.body
     end
 
+    assert_equal 1, game.reload.participants.count
+
     Capybara.using_session(:host) do
       connect_turbo_cable_stream_sources
-      assert_text "PLAYERS\n1"
+      assert_selector "[data-player-count]", text: "1"
+    end
+  end
+
+  test "stale game broadcast does not move a player back from reviewing to submitted state" do
+    game = Game.create!(quiz: quizzes(:ruby_trivia))
+    question = game.quiz.questions.order(:position).first
+    correct_answer = answers(:mvc_correct).body
+
+    game.participants.create!(user: users(:alice))
+    game.participants.create!(user: users(:bob))
+    game.start!
+
+    Capybara.using_session(:alice_player) do
+      sign_in_as(users(:alice))
+      visit play_path(code: game.code)
+      connect_turbo_cable_stream_sources
+
+      assert_text question.body
+      click_button answers(:mvc_wrong_1).body
+
+      assert_text "Answer submitted!"
+      assert_text "Waiting for results…"
+    end
+
+    stale_game = Game.includes(:participants).find(game.id)
+
+    Capybara.using_session(:bob_player) do
+      sign_in_as(users(:bob))
+      visit play_path(code: game.code)
+      connect_turbo_cable_stream_sources
+
+      assert_text question.body
+      click_button answers(:mvc_correct).body
+
+      assert_selector "[data-leaderboard]"
+      assert_text correct_answer
+      assert_no_text "Answer submitted!"
+    end
+
+    Capybara.using_session(:alice_player) do
+      assert_selector "[data-leaderboard]"
+      assert_text correct_answer
+      assert_no_text "Answer submitted!"
+    end
+
+    stale_game.broadcast_game_state
+
+    Capybara.using_session(:alice_player) do
+      assert_selector "[data-leaderboard]"
+      assert_text correct_answer
+      assert_no_text "Answer submitted!"
     end
   end
 end

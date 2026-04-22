@@ -1,4 +1,6 @@
 class Game < ApplicationRecord
+  STALE_RETRY_ATTEMPTS = 3
+
   belongs_to :quiz, inverse_of: :games
   belongs_to :current_question, class_name: "Question", optional: true
 
@@ -7,6 +9,20 @@ class Game < ApplicationRecord
   enum :status, { waiting: 0, active: 1, finished: 2, reviewing: 3 }
 
   before_create :generate_code
+
+  def with_stale_retry(attempts: STALE_RETRY_ATTEMPTS)
+    tries = 0
+
+    begin
+      yield self
+    rescue ActiveRecord::StaleObjectError
+      tries += 1
+      raise if tries >= attempts
+
+      reload
+      retry
+    end
+  end
 
   def start!
     return unless waiting?
@@ -57,7 +73,9 @@ class Game < ApplicationRecord
   end
 
   def broadcast_game_state
-    broadcast_replace(
+    broadcast_action_to(
+      self,
+      action: :versioned_replace,
       target: "game_host_area",
       partial: "games/host_area",
       locals: { game: self }
@@ -66,8 +84,9 @@ class Game < ApplicationRecord
     participants.each do |participant|
       next unless participant.user_id
 
-      broadcast_replace_to(
+      broadcast_action_to(
         "game_#{id}_player_#{participant.user_id}",
+        action: :versioned_replace,
         target: "player_game_area",
         partial: "play/game_area",
         locals: { game: self, participant: participant }

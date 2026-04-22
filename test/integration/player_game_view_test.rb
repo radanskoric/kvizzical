@@ -5,6 +5,7 @@ class PlayerGameViewTest < ActionDispatch::IntegrationTest
     @game = games(:active_game)
     post play_path(code: @game.code), params: { name: "TestPlayer" }
     follow_redirect!
+    @game.reload
   end
 
   test "shows question body when game is active" do

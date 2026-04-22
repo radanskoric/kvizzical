@@ -12,11 +12,17 @@ class ResponsesController < ApplicationController
         answer_id: params[:answer_id],
         responded_at: Time.current
       )
+
       if response.save
-        if game.all_answered?
-          game.finish_question!
-        else
-          game.broadcast_game_state
+        game = game.reload
+
+        game.with_stale_retry do |current_game|
+          game = current_game
+          if game.all_answered?
+            game.finish_question!
+          else
+            game.broadcast_game_state
+          end
         end
       end
     end

@@ -1,5 +1,5 @@
 class Participant < ApplicationRecord
-  belongs_to :game, inverse_of: :participants
+  belongs_to :game, inverse_of: :participants, touch: true
   belongs_to :user, optional: true, inverse_of: :participants
 
   has_many :responses, dependent: :destroy, inverse_of: :participant

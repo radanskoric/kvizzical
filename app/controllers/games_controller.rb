@@ -13,17 +13,29 @@ class GamesController < ApplicationController
   end
 
   def start
-    @game.start!
+    @game.with_stale_retry do |game|
+      @game = game
+      @game.start!
+    end
+
     redirect_to game_path(@game)
   end
 
   def advance
-    @game.advance!
+    @game.with_stale_retry do |game|
+      @game = game
+      @game.advance!
+    end
+
     redirect_to game_path(@game)
   end
 
   def finish_question
-    @game.finish_question!
+    @game.with_stale_retry do |game|
+      @game = game
+      @game.finish_question!
+    end
+
     redirect_to game_path(@game)
   end
 

@@ -24,6 +24,7 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
       responded_at: game.question_opened_at + 2.seconds
     )
 
+    game.reload
     game.update!(status: :reviewing, question_opened_at: nil)
 
     get game_path(game)
@@ -51,6 +52,7 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
       responded_at: game.question_opened_at + 2.seconds
     )
 
+    game.reload
     game.update!(status: :reviewing, question_opened_at: nil)
 
     get game_path(game)
@@ -65,7 +67,7 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
     previous_question = questions(:gem_question)
     alice = participants(:alice_in_game)
     bob = participants(:bob_in_game)
-    charlie = Participant.create!(game: game, user: User.create!(name: "Charlie", session_token: SecureRandom.hex(16)))
+    charlie = game.participants.create!(user: User.create!(name: "Charlie", session_token: SecureRandom.hex(16)))
 
     Response.create!(
       participant: alice,
@@ -81,12 +83,17 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
       responded_at: game.question_opened_at + 14.seconds
     )
 
+    charlie.reload
     Response.create!(
       participant: charlie,
       question: previous_question,
       answer: answers(:gem_correct),
       responded_at: game.question_opened_at + 14.5.seconds
     )
+
+    alice.reload
+    bob.reload
+    charlie.reload
 
     Response.create!(
       participant: alice,
@@ -109,6 +116,7 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
       responded_at: game.question_opened_at + 8.seconds
     )
 
+    game.reload
     game.update!(status: :reviewing, question_opened_at: nil)
 
     get game_path(game)
@@ -119,7 +127,7 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
 
   test "leaderboard shows anonymous when participant has no user" do
     game = games(:active_game)
-    anonymous_participant = Participant.create!(game: game)
+    anonymous_participant = game.participants.create!
 
     Response.create!(
       participant: anonymous_participant,
@@ -128,6 +136,7 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
       responded_at: game.question_opened_at + 1.second
     )
 
+    game.reload
     game.update!(status: :reviewing, question_opened_at: nil)
 
     get game_path(game)
@@ -150,6 +159,7 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
     post play_path(code: game.code), params: { name: "LeaderPlayer" }
     follow_redirect!
 
+    game.reload
     game.update!(status: :finished, current_question: nil)
 
     get play_path(code: game.code)
@@ -165,6 +175,7 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
 
     post play_path(code: game.code), params: { name: "LeaderPlayer" }
     player = game.participants.find_by!(user: User.find_by!(session_token: session[:user_session_token]))
+    player.reload
 
     Response.create!(
       participant: participants(:alice_in_game),
@@ -180,6 +191,7 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
       responded_at: game.question_opened_at + 9.seconds
     )
 
+    game.reload
     game.update!(status: :reviewing, question_opened_at: nil)
 
     get play_path(code: game.code)
@@ -192,35 +204,41 @@ class LeaderboardTest < ActionDispatch::IntegrationTest
     game = games(:active_game)
     question = game.current_question
     previous_question = questions(:gem_question)
+    alice = participants(:alice_in_game)
+    bob = participants(:bob_in_game)
 
     Response.create!(
-      participant: participants(:alice_in_game),
+      participant: alice,
       question: previous_question,
       answer: answers(:gem_correct),
       responded_at: game.question_opened_at + 14.seconds
     )
 
     Response.create!(
-      participant: participants(:bob_in_game),
+      participant: bob,
       question: previous_question,
       answer: answers(:gem_wrong_1),
       responded_at: game.question_opened_at + 14.seconds
     )
 
+    alice.reload
+    bob.reload
+
     Response.create!(
-      participant: participants(:alice_in_game),
+      participant: alice,
       question: question,
       answer: answers(:mvc_wrong_1),
       responded_at: game.question_opened_at + 1.second
     )
 
     Response.create!(
-      participant: participants(:bob_in_game),
+      participant: bob,
       question: question,
       answer: answers(:mvc_wrong_1),
       responded_at: game.question_opened_at + 2.seconds
     )
 
+    game.reload
     game.update!(status: :reviewing, question_opened_at: nil)
 
     get game_path(game)

@@ -1,4 +1,4 @@
-<div id="player_game_area" data-game-status="<%= game.status %>">
+<div id="player_game_area" data-game-status="<%= game.status %>" data-version="<%= game.lock_version %>">
   <% if game.waiting? %>
     <h1 class="page-title text-3xl mb-2"><%= game.quiz.title %></h1>
     <p class="text-lg text-gray-500 mb-4">Welcome, <span class="font-semibold text-gray-700"><%= participant.name %></span></p>

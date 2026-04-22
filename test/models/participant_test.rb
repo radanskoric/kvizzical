@@ -27,14 +27,14 @@ class ParticipantTest < ActiveSupport::TestCase
 
   test "same user can join different games" do
     game2 = Game.create!(quiz: quizzes(:ruby_trivia))
-    p1 = Participant.create!(user: users(:alice), game: games(:waiting_game))
+    p1 = games(:waiting_game).participants.create!(user: users(:alice))
     p2 = Participant.new(user: users(:alice), game: game2)
     assert p2.valid?
   end
 
   test "allows multiple anonymous participants in the same game" do
     game = games(:waiting_game)
-    participant1 = Participant.create!(game: game)
+    participant1 = game.participants.create!
     participant2 = Participant.new(game: game)
 
     assert participant1.persisted?

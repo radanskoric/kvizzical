@@ -4,7 +4,10 @@ class PlayController < ApplicationController
 
   def show
     @user = current_player_user
-    if @user
+    return unless @user
+
+    @game.with_stale_retry do |game|
+      @game = game
       @participant = @game.participants.find_or_initialize_by(user: @user)
       if @participant.new_record?
         @participant.save!
@@ -20,8 +23,12 @@ class PlayController < ApplicationController
 
     session[:user_session_token] = user.session_token unless current_user
 
-    @game.participants.find_or_create_by!(user: user)
-    @game.reload.broadcast_game_state
+    @game.with_stale_retry do |game|
+      @game = game
+      @game.participants.find_or_create_by!(user: user)
+      @game.reload.broadcast_game_state
+    end
+
     redirect_to play_path(code: @game.code)
   end
 

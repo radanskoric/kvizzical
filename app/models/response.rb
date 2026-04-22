@@ -1,5 +1,5 @@
 class Response < ApplicationRecord
-  belongs_to :participant, inverse_of: :responses
+  belongs_to :participant, inverse_of: :responses, touch: true
   belongs_to :question
   belongs_to :answer
 

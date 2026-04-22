@@ -31,6 +31,12 @@ class GameTest < ActiveSupport::TestCase
     assert game.waiting?
   end
 
+  test "defaults lock_version to zero" do
+    game = Game.create!(quiz: quizzes(:ruby_trivia))
+
+    assert_equal 0, game.lock_version
+  end
+
   test "has waiting, active, and finished statuses" do
     game = games(:waiting_game)
     assert game.waiting?
@@ -102,6 +108,54 @@ class GameTest < ActiveSupport::TestCase
     assert_not game.all_answered?
   end
 
+  test "with_stale_retry reloads and retries on stale object error" do
+    game = games(:waiting_game)
+    calls = []
+
+    game.with_stale_retry(attempts: 2) do |current_game|
+      calls << current_game.lock_version
+
+      if calls.one?
+        game.update!(status: :active, current_question: questions(:mvc_question), question_opened_at: Time.current)
+        raise ActiveRecord::StaleObjectError.new(current_game, "update")
+      end
+    end
+
+    assert_equal [ 0, 1 ], calls
+  end
+
+  test "with_stale_retry raises when retry budget is exhausted" do
+    game = games(:waiting_game)
+
+    assert_raises(ActiveRecord::StaleObjectError) do
+      game.with_stale_retry(attempts: 1) do |current_game|
+        raise ActiveRecord::StaleObjectError.new(current_game, "update")
+      end
+    end
+  end
+
+  test "participant touch increments game lock_version" do
+    game = games(:waiting_game)
+
+    assert_changes -> { game.reload.lock_version }, from: 0, to: 1 do
+      game.participants.create!(user: users(:alice))
+    end
+  end
+
+  test "response touch increments game lock_version through participant" do
+    game = games(:active_game)
+    participant = participants(:alice_in_game)
+
+    assert_changes -> { game.reload.lock_version }, from: 0, to: 1 do
+      Response.create!(
+        participant: participant,
+        question: game.current_question,
+        answer: answers(:mvc_correct),
+        responded_at: game.question_opened_at + 1.second
+      )
+    end
+  end
+
   test "previous_leaderboard_positions returns empty hash when game is not reviewing" do
     game = games(:active_game)
 
@@ -114,7 +168,7 @@ class GameTest < ActiveSupport::TestCase
     previous_question = questions(:gem_question)
     alice = participants(:alice_in_game)
     bob = participants(:bob_in_game)
-    charlie = Participant.create!(game: game, user: User.create!(name: "Charlie", session_token: SecureRandom.hex(16)))
+    charlie = game.participants.create!(user: User.create!(name: "Charlie", session_token: SecureRandom.hex(16)))
 
     Response.create!(
       participant: alice,
@@ -130,12 +184,17 @@ class GameTest < ActiveSupport::TestCase
       responded_at: game.question_opened_at + 14.seconds
     )
 
+    charlie.reload
     Response.create!(
       participant: charlie,
       question: previous_question,
       answer: answers(:gem_correct),
       responded_at: game.question_opened_at + 14.5.seconds
     )
+
+    alice.reload
+    bob.reload
+    charlie.reload
 
     Response.create!(
       participant: alice,
@@ -158,6 +217,7 @@ class GameTest < ActiveSupport::TestCase
       responded_at: game.question_opened_at + 8.seconds
     )
 
+    game.reload
     game.update!(status: :reviewing, question_opened_at: nil)
 
     assert_equal(
@@ -180,11 +240,13 @@ class GameTest < ActiveSupport::TestCase
 
     assert_equal 1, player_broadcasts.size
     assert_includes player_broadcasts.first, 'target="player_game_area"'
+    assert_includes player_broadcasts.first, 'action="versioned_replace"'
+    assert_includes player_broadcasts.first, %(data-version="#{game.lock_version}")
   end
 
   test "broadcast_game_state does not broadcast to an anonymous participant stream" do
     game = games(:active_game)
-    Participant.create!(game: game)
+    game.participants.create!
 
     player_broadcasts = capture_broadcasts("game_#{game.id}_player_") do
       game.broadcast_game_state
@@ -203,6 +265,8 @@ class GameTest < ActiveSupport::TestCase
 
     assert_equal 1, host_broadcasts.size
     assert_includes host_broadcasts.first, 'target="game_host_area"'
+    assert_includes host_broadcasts.first, 'action="versioned_replace"'
+    assert_includes host_broadcasts.first, %(data-version="#{game.lock_version}")
   end
 
   test "generate_code retries when a generated code already exists" do
