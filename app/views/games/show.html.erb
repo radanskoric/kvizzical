@@ -1,6 +1,8 @@
 <%= turbo_stream_from @game %>
 
-<div class="page-shell max-w-2xl">
+<% host_shell_classes = ["page-shell", @game.active? || @game.reviewing? ? "max-w-none px-6" : "max-w-2xl"] %>
+
+<div class="<%= host_shell_classes.join(" ") %>">
   <h1 class="page-title text-4xl font-extrabold tracking-tight mb-4"><%= @game.quiz.title %></h1>
   <%= render "games/host_area", game: @game %>
 </div>

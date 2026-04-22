@@ -41,6 +41,7 @@ class HostDashboardTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-game-code]", text: game.code
     assert_select "p", text: "Scan to Join"
+    assert_select "p", text: "Question (1/2)"
     assert_select "svg", minimum: 1
   end
 
