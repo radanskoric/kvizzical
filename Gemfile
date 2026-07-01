@@ -38,7 +38,7 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
 gem "reactionview"
-gem "herb", "~> 0.9"
+gem "herb", "~> 0.10"
 gem "litestream", "~> 0.14.0"
 gem "amazing_print"
 gem "dockerfile-rails", ">= 1.7", group: :development
